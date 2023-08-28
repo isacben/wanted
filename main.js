@@ -75,6 +75,7 @@ let debug = Text({
 let playerSpriteSheet;
 let playerSprite;
 let arrows = [];
+let guards = [];
 let tileEngine;
 
 
@@ -161,7 +162,7 @@ let tileEngine;
       // guards.spawn();
       // guards.update();
       
-      message = 'Arrows: ' + arrows.length; 
+      message = 'X: ' + playerSprite.x; 
       // message += ' Y: ' + player.sprite.y; 
       // message += ' DY: ' + player.sprite.dy; 
       debug.text = message;
@@ -209,9 +210,12 @@ let running = false;
 let jumping = false;
 let falling = false;
 let sliding = false;
+let flip = false;
 
 
 export function playerUpdate() {
+
+  
 
   // physics
   playerSprite.dy += gravity;
@@ -229,7 +233,15 @@ export function playerUpdate() {
     } else {
       running = false;
     }
+
     playerSprite.setScale(-1, 1);
+    
+    // flip = true;
+    // if (playerSprite.scaleX === 1) {
+    //   playerSprite.x += 32;
+    //   playerSprite.scaleX = -1;
+    // }
+    
     playerSprite.dx -= acc;
   }
   
@@ -239,8 +251,14 @@ export function playerUpdate() {
     } else {
       running = false;
     }
-    playerSprite.dx += acc;
     playerSprite.setScale(1, 1);
+    /* flip = false;
+    if (playerSprite.scaleX === -1) {
+      playerSprite.x -= 32;
+      playerSprite.scaleX = 1;
+      
+    } */
+    playerSprite.dx += acc;
   }
 
   // slide
@@ -262,7 +280,6 @@ export function playerUpdate() {
     falling = true;
     landed = false;
     jumping = false;
-    // running = false; 
     playerSprite.dy = clamp(-playerSprite.max_dy, playerSprite.max_dy, playerSprite.dy);
 
     if (collide_map(playerSprite, "down")) {
@@ -301,8 +318,13 @@ export function playerUpdate() {
     }
   }
 
+  
+
   playerSprite.x += playerSprite.dx;
   playerSprite.y += playerSprite.dy;
+
+  
+
 }
 
 function playerAnimate() {
@@ -362,7 +384,7 @@ function collide_map(sprite, direction) {
   } else if (direction === "up") {
      x1=x+4;
      y1=y-4;
-     x2=x+w-4;
+     x2=x+w-12;
      y2=y;
   } else if (direction === "down") { 
      x1=x;
@@ -393,6 +415,10 @@ function updateArrows() {
     arrow.ttl -= 2;
     arrow.update();
     
+    if (collide_map(arrow, "left") || collide_map(arrow, "right")) {
+      deleteArrow(i);
+    }
+
     if (arrow.ttl <= 0) {
       deleteArrow(i);
     }
@@ -402,12 +428,13 @@ function updateArrows() {
 function addArrow(x, y, dir) {
   let arrow = Sprite({
     x: x,
-    y: y,
+    y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
     dx: 6 * dir,
     scaleX: dir*4,
     scaleY: 4,
-    width: 8,
-    height: 8,
+    width: 32,
+    height: 32,
+    anchor: {x: 0, y: 0},
     image: imageAssets['./img/arrow.png'],
     ttl: 200,
   });
