@@ -1,0 +1,11 @@
+{
+  "name": "robin",
+  "version": "1.0.0",
+  "description": "js13kgames 2023 entry",
+  "main": "main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Isaac Benitez",
+  "license": "MIT"
+}
