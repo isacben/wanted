@@ -10,11 +10,24 @@ import {
   Sprite,
   SpriteSheet,
   GameLoop,
+  collides,
   clamp
 } from './kontra.mjs';
 
 
 // Globals
+
+const friction = 0.85;
+const gravity = 0.2;
+const acc = 0.3;
+const boost = 4;
+
+let shot = false;
+let landed = false;
+let running = false;
+let jumping = false;
+let falling = false;
+let sliding = false;
 
 let T = 0;
 const l1 = [
@@ -73,7 +86,7 @@ let debug = Text({
 });
 
 let playerSpriteSheet;
-let playerSprite;
+let player;
 let arrows = [];
 let guards = [];
 let tileEngine;
@@ -130,7 +143,7 @@ let tileEngine;
     }
   });
   
-  playerSprite = Sprite({
+  player = Sprite({
     x: 8 * 4 + 16,
     y: 64 * 4,
     dx: 0,
@@ -142,6 +155,8 @@ let tileEngine;
     anchor: {x: 0.5, y: 0},
     animations: playerSpriteSheet.animations
   });
+
+  spawnGuard(32*4, 32*4);
     
   let loop = GameLoop({ 
     update: function() { 
@@ -154,15 +169,13 @@ let tileEngine;
       T += 1;
       playerUpdate();
       playerShoot();
-      playerSprite.update();
+      player.update();
       playerAnimate();
 
       updateArrows();
-      //
-      // guards.spawn();
-      // guards.update();
+      updateGuards();
       
-      message = 'X: ' + playerSprite.x; 
+      message = 'X: ' + player.x; 
       // message += ' Y: ' + player.sprite.y; 
       // message += ' DY: ' + player.sprite.dy; 
       debug.text = message;
@@ -171,15 +184,13 @@ let tileEngine;
     render: function() {
       
       tileEngine.render();
-      playerSprite.render();
+      player.render();
       arrows.forEach(arrow => {
         arrow.render();
       });
-      //
-      // guards.sprites.forEach(guard => {
-      //   guard.render();
-      // });
-      //
+      
+      renderGuards();
+      
       debug.render();
     }
   });
@@ -199,30 +210,14 @@ function camera(left, top) {
 //
 // 
 
-const friction = 0.85;
-const gravity = 0.2;
-const acc = 0.3;
-const boost = 4;
 
-let shot = false;
-let landed = false;
-let running = false;
-let jumping = false;
-let falling = false;
-let sliding = false;
-let flip = false;
-
-
-export function playerUpdate() {
-
-  
-
+function playerUpdate() {
   // physics
-  playerSprite.dy += gravity;
-  playerSprite.dx *= friction;
+  player.dy += gravity;
+  player.dx *= friction;
 
-  if (Math.abs(playerSprite.dx) < 0.2) {
-    playerSprite.dx = 0;
+  if (Math.abs(player.dx) < 0.2) {
+    player.dx = 0;
     sliding = false;
   }
 
@@ -234,15 +229,8 @@ export function playerUpdate() {
       running = false;
     }
 
-    playerSprite.setScale(-1, 1);
-    
-    // flip = true;
-    // if (playerSprite.scaleX === 1) {
-    //   playerSprite.x += 32;
-    //   playerSprite.scaleX = -1;
-    // }
-    
-    playerSprite.dx -= acc;
+    player.setScale(-1, 1);
+    player.dx -= acc;
   }
   
   if (keyPressed('arrowright')) {
@@ -251,14 +239,8 @@ export function playerUpdate() {
     } else {
       running = false;
     }
-    playerSprite.setScale(1, 1);
-    /* flip = false;
-    if (playerSprite.scaleX === -1) {
-      playerSprite.x -= 32;
-      playerSprite.scaleX = 1;
-      
-    } */
-    playerSprite.dx += acc;
+    player.setScale(1, 1);
+    player.dx += acc;
   }
 
   // slide
@@ -271,73 +253,68 @@ export function playerUpdate() {
   
   // jump
   if (keyPressed('x') && landed) {
-    playerSprite.dy -= boost;
+    player.dy -= boost;
     landed = false;
   }
 
   // check collision up and down
-  if (playerSprite.dy > 0) { // falling
+  if (player.dy > 0) { // falling
     falling = true;
     landed = false;
     jumping = false;
-    playerSprite.dy = clamp(-playerSprite.max_dy, playerSprite.max_dy, playerSprite.dy);
+    player.dy = clamp(-player.max_dy, player.max_dy, player.dy);
 
-    if (collide_map(playerSprite, "down")) {
-      playerSprite.dy = 0;
+    if (collide_map(player, "down")) {
+      player.dy = 0;
       landed = true;
       falling = false;
-      playerSprite.y -= ((playerSprite.y + playerSprite.height + 1) % 8) - 1;
+      player.y -= ((player.y + player.height + 1) % 8) - 1;
     }
-  } else if (playerSprite.dy < 0) {
+  } else if (player.dy < 0) {
       jumping = true;
       running = false;
 
-      if (collide_map(playerSprite, "up")) {
-        playerSprite.dy = 0;
+      if (collide_map(player, "up")) {
+        player.dy = 0;
       }
   }
 
   // check collision left and right
-  if (playerSprite.dx < 0) {
-    playerSprite.dx = clamp(-playerSprite.max_dx, playerSprite.max_dx, playerSprite.dx);
+  if (player.dx < 0) {
+    player.dx = clamp(-player.max_dx, player.max_dx, player.dx);
 
-    if (collide_map(playerSprite, "left")) {
-      playerSprite.dx = 0;
+    if (collide_map(player, "left")) {
+      player.dx = 0;
 
       // wall correction
-      playerSprite.x -= ((playerSprite.x - 17 + 1) % 8) - 1;
+      player.x -= ((player.x - 17 + 1) % 8) - 1;
     }
-  } else if (playerSprite.dx > 0) {
-    playerSprite.dx = clamp(-playerSprite.max_dx, playerSprite.max_dx, playerSprite.dx);
+  } else if (player.dx > 0) {
+    player.dx = clamp(-player.max_dx, player.max_dx, player.dx);
     
-    if (collide_map(playerSprite, "right")) {
-      playerSprite.dx = 0;
+    if (collide_map(player, "right")) {
+      player.dx = 0;
 
       // wall correction
-      playerSprite.x += ((playerSprite.width + 1) % 8) - 1;
+      player.x += ((player.width + 1) % 8) - 1;
     }
   }
 
-  
-
-  playerSprite.x += playerSprite.dx;
-  playerSprite.y += playerSprite.dy;
-
-  
-
+  player.x += player.dx;
+  player.y += player.dy;
 }
 
 function playerAnimate() {
   if (running) {
-    playerSprite.playAnimation('run');
+    player.playAnimation('run');
   } else if (jumping) {
-    playerSprite.playAnimation('jump');
+    player.playAnimation('jump');
   } else if (falling) {
-    playerSprite.playAnimation('fall');
+    player.playAnimation('fall');
   } else if (sliding) {
-    playerSprite.playAnimation('slide');
+    player.playAnimation('slide');
   } else {
-    playerSprite.playAnimation('idle');
+    player.playAnimation('idle');
   }
 }
 
@@ -345,7 +322,7 @@ function playerShoot() {
   onKey('z', function() {
     if (!shot) {
       shot = true;
-      addArrow(playerSprite.x, playerSprite.y, playerSprite.scaleX);
+      addArrow(player.x, player.y, player.scaleX);
     }
   });
   onKey('z', function() {
@@ -412,16 +389,13 @@ function collide_map(sprite, direction) {
 
 function updateArrows() {
   arrows.forEach((arrow, i)=> {
-    arrow.ttl -= 2;
     arrow.update();
     
     if (collide_map(arrow, "left") || collide_map(arrow, "right")) {
-      deleteArrow(i);
+      arrow.ttl = 0;
     }
 
-    if (arrow.ttl <= 0) {
-      deleteArrow(i);
-    }
+    deleteArrow(arrow);
   });
 }
 
@@ -430,17 +404,74 @@ function addArrow(x, y, dir) {
     x: x,
     y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
     dx: 6 * dir,
-    scaleX: dir*4,
-    scaleY: 4,
+    scaleX: dir,
+    scaleY: 1,
     width: 32,
     height: 32,
     anchor: {x: 0, y: 0},
     image: imageAssets['./img/arrow.png'],
-    ttl: 200,
+    ttl: 70,
   });
   arrows.push(arrow);
 }
 
 function deleteArrow(arrow) {
-  arrows.splice(arrow, 1);
+  if (arrow.ttl <= 0) {
+    arrows.splice(arrow, 1);
+  }
+}
+
+//
+//
+// ***** guards *****
+//
+// 
+
+function updateGuards() {
+  guards.forEach((guard, i)=> {
+    guard.update();
+    
+
+    arrows.forEach((arrow) => {
+      if (collides(arrow, guard)) {
+        guard.health -= 1;
+        arrow.ttl = 0; 
+      }
+    });
+
+    if (guard.health <= 0) {
+      destroyGuard(guard);
+    }
+
+    if (collides(guard, player)) {
+      console.log("guard touched the player")
+      //destroy(i);
+      //g.shake = 9;
+    }
+  });
+
+}
+
+function renderGuards() {
+  guards.forEach(guard => {
+    guard.render();
+  });
+}
+
+function spawnGuard(x, y) {
+  let guard = Sprite({
+    x: x,
+    y: y,
+    dx: 0,
+    width: 32,
+    height: 32,
+    anchor: {x: 0, y: 0},
+    image: imageAssets['./img/guard.png'],
+    health: 5
+  });
+  guards.push(guard);
+}
+
+function destroyGuard(guard) {
+  guards.splice(guard, 1);
 }
