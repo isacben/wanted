@@ -2,6 +2,26 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
+### August 28th, 2023
+
+It's all about the shrinking!
+
+Not the best weekend: I lost too much time trying to use webpack or vite to bundle the code in a way that I was able to compress the deliverable to a reasonable size: in this case, because of the amount of code I had, no more than 7kb.
+
+I had a problem with the images with the minified version of the code: the images were not loading. I think the problem was in the way I was configuring the project webpack and vite.
+
+Unfortunately, I was not able to solve the issue, and I needed to keep writing the game. So I migrated from TypeScript to just JavaScript.
+
+Not ideal, but once I migrated, I was able to restart coding, now knowing that my project will be able to fit within the 13kb this game jam is all about.
+
+I also started implementing the enemies.
+
+I only have just over 2 weeks, though, and I still have a lot to do!
+
+It's been fun!
+
+![](./gifs/2023-08-28-01.gif)
+
 ### August 24th, 2023
 
 Today I finished the implementation of the player's movement and its animations.

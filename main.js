@@ -157,6 +157,7 @@ let tileEngine;
   });
 
   spawnGuard(32*4, 32*4);
+  spawnGuard(32*6, 32*6);
     
   let loop = GameLoop({ 
     update: function() { 
@@ -440,7 +441,7 @@ function updateGuards() {
     });
 
     if (guard.health <= 0) {
-      destroyGuard(guard);
+      destroyGuard(i);
     }
 
     if (collides(guard, player)) {
