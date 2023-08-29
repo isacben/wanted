@@ -29,6 +29,18 @@ let jumping = false;
 let falling = false;
 let sliding = false;
 
+// ----- Test -----
+let x1r = 0;
+let y1r = 0;
+let x2r = 0;
+let y2r = 0;
+
+let hitbox = Sprite({
+  color: 'cyan',
+});
+
+// ----- Test -----
+
 let T = 0;
 const l1 = [
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -36,7 +48,7 @@ const l1 = [
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,
+  1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -84,6 +96,8 @@ let debug = Text({
   y: 8 * 4,
   textAlign: 'left'
 });
+
+
 
 let playerSpriteSheet;
 let player;
@@ -161,11 +175,20 @@ let tileEngine;
     
   let loop = GameLoop({ 
     update: function() { 
+
       //camera(10 + g.shake * (Math.floor(Math.random() * 2) - 1), 10 + g.shake * (Math.floor(Math.random() * 2) - 1));
 
       //if (g.shake > 0) {
       //  g.shake *= 0.5;
       //}
+
+      // ----- Test -----
+      hitbox.x = x1r;
+      hitbox.y = y1r;
+      hitbox.width = x2r - x1r;
+      hitbox.height = y2r - y1r;
+      hitbox.update()
+      // ----- Test -----
 
       T += 1;
       playerUpdate();
@@ -176,14 +199,13 @@ let tileEngine;
       updateArrows();
       updateGuards();
       
-      message = 'X: ' + player.x; 
+      message = 'x1r: ' + x1r; 
       // message += ' Y: ' + player.sprite.y; 
       // message += ' DY: ' + player.sprite.dy; 
       debug.text = message;
     },
 
     render: function() {
-      
       tileEngine.render();
       player.render();
       arrows.forEach(arrow => {
@@ -193,6 +215,10 @@ let tileEngine;
       renderGuards();
       
       debug.render();
+
+      // ----- Test -----
+      hitbox.render();
+      // ----- Test -----
     }
   });
 
@@ -351,25 +377,32 @@ function collide_map(sprite, direction) {
 
   if (direction === "left") {
    x1=x-4;
-   y1=y;
+   y1=y+6;
    x2=x;
    y2=y+h-4;
   } else if (direction === "right") { 
      x1=x+w;
-     y1=y;
+     y1=y+6;
      x2=x+w+4;
      y2=y+h-4;
   } else if (direction === "up") {
      x1=x+4;
-     y1=y-4;
+     y1=y+4;
      x2=x+w-12;
      y2=y;
   } else if (direction === "down") { 
-     x1=x;
-     y1=y+h;
-     x2=x+w;
+     x1=x+8;
+     y1=y+h-4;
+     x2=x+w-8;
      y2=y+h;
   }
+
+  // ----- Test -----
+  x1r = x1;
+  y1r = y1;
+  x2r = x2;
+  y2r = y2;
+  // ----- Test -----
 
   if (tileEngine.tileAtLayer('ground', {x: x1, y: y1}) > 0 ||
     tileEngine.tileAtLayer('ground', {x: x1, y: y2}) > 0 ||
@@ -443,8 +476,9 @@ function updateGuards() {
       //falling = true;
       //landed = false;
       //jumping = false;
+      
       guard.dy = clamp(-guard.max_dy, guard.max_dy, guard.dy);
-
+      
       if (collide_map(guard, "down")) {
         guard.dy = 0;
         //landed = true;
@@ -463,7 +497,7 @@ function updateGuards() {
     // check collision left and right
     if (guard.dx < 0) {
       guard.dx = clamp(-guard.max_dx, guard.max_dx, guard.dx);
-
+      
       if (collide_map(guard, "left")) {
         guard.scaleX = -1
       }
@@ -474,6 +508,9 @@ function updateGuards() {
         guard.scaleX = 1
       }
     }
+
+    guard.x += guard.dx;
+    guard.y += guard.dy;
 
     arrows.forEach((arrow) => {
       if (collides(arrow, guard)) {
@@ -509,7 +546,7 @@ function spawnGuard(x, y) {
     dy: 0,
     max_dx: 2,
     max_dy: 4,
-    acc: Math.random() * 0.15 + 0.15,
+    acc: Math.random() * 0.05 + 0.1,
     width: 32,
     height: 32,
     scaleX: randDir(),
