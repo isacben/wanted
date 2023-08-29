@@ -432,6 +432,48 @@ function updateGuards() {
   guards.forEach((guard, i)=> {
     guard.update();
     
+    guard.dy += gravity;
+    guard.dx *= friction;
+
+    
+    guard.dx -= guard.acc * guard.scaleX;
+
+    // check collision up and down
+    if (guard.dy > 0) { // falling
+      //falling = true;
+      //landed = false;
+      //jumping = false;
+      guard.dy = clamp(-guard.max_dy, guard.max_dy, guard.dy);
+
+      if (collide_map(guard, "down")) {
+        guard.dy = 0;
+        //landed = true;
+        //falling = false;
+        guard.y -= ((guard.y + guard.height + 1) % 8) - 1;
+      }
+    } else if (guard.dy < 0) {
+        //jumping = true;
+        //running = false;
+
+        if (collide_map(guard, "up")) {
+          guard.dy = 0;
+        }
+    }
+
+    // check collision left and right
+    if (guard.dx < 0) {
+      guard.dx = clamp(-guard.max_dx, guard.max_dx, guard.dx);
+
+      if (collide_map(guard, "left")) {
+        guard.scaleX = -1
+      }
+    } else if (guard.dx > 0) {
+      guard.dx = clamp(-guard.max_dx, guard.max_dx, guard.dx);
+      
+      if (collide_map(guard, "right")) {
+        guard.scaleX = 1
+      }
+    }
 
     arrows.forEach((arrow) => {
       if (collides(arrow, guard)) {
@@ -464,15 +506,27 @@ function spawnGuard(x, y) {
     x: x,
     y: y,
     dx: 0,
+    dy: 0,
+    max_dx: 2,
+    max_dy: 4,
+    acc: Math.random() * 0.15 + 0.15,
     width: 32,
     height: 32,
-    anchor: {x: 0, y: 0},
+    scaleX: randDir(),
+    anchor: {x: 0.5, y: 0},
     image: imageAssets['./img/guard.png'],
     health: 5
   });
+
+  console.log(guard.acc);
   guards.push(guard);
 }
 
 function destroyGuard(guard) {
   guards.splice(guard, 1);
+}
+
+
+function randDir() {
+  return Math.random() < 0.5 ? -1 : 1
 }
