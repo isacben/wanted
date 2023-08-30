@@ -471,32 +471,28 @@ function updateGuards() {
     
     guard.dx -= guard.acc * guard.scaleX;
 
-    console.log(guard.landed);
     // jump
     if (tileEngine.tileAtLayer('ground', guard) === 2) {
-      if (shouldJump() && guard.landed) {
-        guard.dy -= guard.boost;
-        guard.landed = false;
+      if (guard.checkJump) {
+        guard.checkJump = false;
+        if (shouldJump()) {
+          guard.dy -= guard.boost;
+        }
       }
+    } else {
+      guard.checkJump = true;
     }
 
     // check collision up and down
-    if (guard.dy > 0) { // falling
-      //falling = true;
-      guard.landed = false;
-      guard.jumping = false;
-      
+    if (guard.dy > 0) { // falling      
       guard.dy = clamp(-guard.max_dy, guard.max_dy, guard.dy);
       
       if (collide_map(guard, "down")) {
         guard.dy = 0;
-        guard.landed = true;
-        //falling = false;
         guard.y -= ((guard.y + guard.height + 1) % 8) - 1;
       }
     } else if (guard.dy < 0) {
-        guard.jumping = true;
-        //running = false;
+
 
         if (collide_map(guard, "up")) {
           guard.dy = 0;
@@ -563,9 +559,7 @@ function spawnGuard(col, row) {
     health: 5,
     acc: 0.11,
     boost: 4.8,
-    jumping: false,
-    landed: false,
-    jump: true,
+    checkJump: true,
   });
 
   console.log(guard.acc);
