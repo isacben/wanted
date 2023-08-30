@@ -47,17 +47,17 @@ const l1 = [
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,1,1,1,0,0,0,1,1,1,1,0,0,1,
+  1,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ];
 
@@ -170,8 +170,8 @@ let tileEngine;
     animations: playerSpriteSheet.animations
   });
 
-  spawnGuard(32*4, 32*4);
-  spawnGuard(32*6, 32*6);
+  spawnGuard(7, 2);
+  spawnGuard(9, 2);
     
   let loop = GameLoop({ 
     update: function() { 
@@ -404,10 +404,10 @@ function collide_map(sprite, direction) {
   y2r = y2;
   // ----- Test -----
 
-  if (tileEngine.tileAtLayer('ground', {x: x1, y: y1}) > 0 ||
-    tileEngine.tileAtLayer('ground', {x: x1, y: y2}) > 0 ||
-    tileEngine.tileAtLayer('ground', {x: x2, y: y1}) > 0 ||
-    tileEngine.tileAtLayer('ground', {x: x2, y: y2}) > 0) {
+  if (tileEngine.tileAtLayer('ground', {x: x1, y: y1}) === 1 ||
+    tileEngine.tileAtLayer('ground', {x: x1, y: y2}) === 1 ||
+    tileEngine.tileAtLayer('ground', {x: x2, y: y1}) === 1 ||
+    tileEngine.tileAtLayer('ground', {x: x2, y: y2}) === 1) {
       return true;
   } else {
     return false;
@@ -471,22 +471,31 @@ function updateGuards() {
     
     guard.dx -= guard.acc * guard.scaleX;
 
+    console.log(guard.landed);
+    // jump
+    if (tileEngine.tileAtLayer('ground', guard) === 2) {
+      if (shouldJump() && guard.landed) {
+        guard.dy -= guard.boost;
+        guard.landed = false;
+      }
+    }
+
     // check collision up and down
     if (guard.dy > 0) { // falling
       //falling = true;
-      //landed = false;
-      //jumping = false;
+      guard.landed = false;
+      guard.jumping = false;
       
       guard.dy = clamp(-guard.max_dy, guard.max_dy, guard.dy);
       
       if (collide_map(guard, "down")) {
         guard.dy = 0;
-        //landed = true;
+        guard.landed = true;
         //falling = false;
         guard.y -= ((guard.y + guard.height + 1) % 8) - 1;
       }
     } else if (guard.dy < 0) {
-        //jumping = true;
+        guard.jumping = true;
         //running = false;
 
         if (collide_map(guard, "up")) {
@@ -538,21 +547,25 @@ function renderGuards() {
   });
 }
 
-function spawnGuard(x, y) {
+function spawnGuard(col, row) {
   let guard = Sprite({
-    x: x,
-    y: y,
+    x: 32 * col,
+    y: 32 * row,
     dx: 0,
     dy: 0,
     max_dx: 2,
     max_dy: 4,
-    acc: Math.random() * 0.05 + 0.1,
     width: 32,
     height: 32,
     scaleX: randDir(),
     anchor: {x: 0.5, y: 0},
     image: imageAssets['./img/guard.png'],
-    health: 5
+    health: 5,
+    acc: 0.11,
+    boost: 4.8,
+    jumping: false,
+    landed: false,
+    jump: true,
   });
 
   console.log(guard.acc);
@@ -566,4 +579,15 @@ function destroyGuard(guard) {
 
 function randDir() {
   return Math.random() < 0.5 ? -1 : 1
+}
+
+
+//
+//
+// ***** helpers *****
+//
+// 
+
+function shouldJump() {
+  return Math.random() < 0.5 ? true : false;
 }
