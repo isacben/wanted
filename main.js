@@ -47,7 +47,7 @@ const l1 = [
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,2,0,0,0,0,0,0,0,0,0,0,2,0,1,
   1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
@@ -107,7 +107,7 @@ let tileEngine;
 
 
 (async () => {
-  await load('./img/arrow.png', './img/guard.png', './img/robin.png', './img/tiles.png');
+  await load('./img/guard.png', './img/robin.png', './img/tiles.png');
 
   tileEngine = TileEngine({
     // tile size
@@ -436,14 +436,15 @@ function updateArrows() {
 function addArrow(x, y, dir) {
   let arrow = Sprite({
     x: x,
-    y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
+    //y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
+    y: y + 12,
     dx: 6 * dir,
     scaleX: dir,
     scaleY: 1,
     width: 32,
-    height: 32,
+    height: 8,
     anchor: {x: 0, y: 0},
-    image: imageAssets['./img/arrow.png'],
+    color: '#AB5236',
     ttl: 70,
   });
   arrows.push(arrow);
