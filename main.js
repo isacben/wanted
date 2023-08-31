@@ -19,7 +19,7 @@ import {
 
 const friction = 0.85;
 const gravity = 0.2;
-const acc = 0.3;
+const acc = 0.25;
 const boost = 4;
 
 let shot = false;
@@ -99,7 +99,7 @@ let debug = Text({
 
 
 
-let playerSpriteSheet;
+let spriteSheet;
 let player;
 let arrows = [];
 let guards = [];
@@ -107,17 +107,18 @@ let tileEngine;
 
 
 (async () => {
-  await load('./img/guard.png', './img/robin.png', './img/tiles.png');
+  await load('./img/ss.png', './img/tiles.png');
 
   tileEngine = TileEngine({
     // tile size
     tilewidth: 32,
     tileheight: 32,
+    frameMargin: 10,
 
     // map size in tiles
     width: 16,
     height: 16,
-
+    
     // tileset object
     tilesets: [{
       firstgid: 1,
@@ -131,28 +132,32 @@ let tileEngine;
     }]
   });
 
-  playerSpriteSheet = SpriteSheet({
-    image: imageAssets['./img/robin.png'], 
+  spriteSheet = SpriteSheet({
+    image: imageAssets['./img/ss.png'], 
     frameWidth: 8,
     frameHeight: 8,
     frameMargin: 1,
     animations: {
-      idle: {
+      playerIdle: {
         frames: [0,1],
         frameRate: 3,
       },
-      run: {
+      playerRun: {
         frames: [2,3,4,3],
         frameRate: 8,
       },
-      jump: {
+      playerJump: {
         frames: [6],
       },
-      fall: {
+      playerFall: {
         frames: [7],
       },
-      slide: {
+      playerSlide: {
         frames:[5]
+      },
+      gWalk: {
+        frames: '10..11',
+        frameRate: 5
       }
     }
   });
@@ -167,7 +172,7 @@ let tileEngine;
     width: 32,
     height: 32,
     anchor: {x: 0.5, y: 0},
-    animations: playerSpriteSheet.animations
+    animations: spriteSheet.animations
   });
 
   spawnGuard(7, 2);
@@ -333,15 +338,15 @@ function playerUpdate() {
 
 function playerAnimate() {
   if (running) {
-    player.playAnimation('run');
+    player.playAnimation('playerRun');
   } else if (jumping) {
-    player.playAnimation('jump');
+    player.playAnimation('playerJump');
   } else if (falling) {
-    player.playAnimation('fall');
+    player.playAnimation('playerFall');
   } else if (sliding) {
-    player.playAnimation('slide');
+    player.playAnimation('playerSlide');
   } else {
-    player.playAnimation('idle');
+    player.playAnimation('playerIdle');
   }
 }
 
@@ -466,6 +471,7 @@ function updateGuards() {
   guards.forEach((guard, i)=> {
     guard.update();
     
+    
     guard.dy += gravity;
     guard.dx *= friction;
 
@@ -534,6 +540,8 @@ function updateGuards() {
       //destroy(i);
       //g.shake = 9;
     }
+
+    guard.playAnimation('gWalk');
   });
 
 }
@@ -561,9 +569,8 @@ function spawnGuard(col, row) {
     acc: 0.11,
     boost: 4.8,
     checkJump: true,
+    animations: spriteSheet.animations
   });
-
-  console.log(guard.acc);
   guards.push(guard);
 }
 
