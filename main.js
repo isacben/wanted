@@ -102,7 +102,7 @@ let debug = Text({
 let spriteSheet;
 let player;
 let arrows = [];
-let guards = [];
+let people = [];
 let tileEngine;
 
 
@@ -155,9 +155,19 @@ let tileEngine;
       playerSlide: {
         frames:[5]
       },
-      gWalk: {
-        frames: '10..11',
+      guard: {
+        frames: [10, 11, 10],
         frameRate: 5
+      },
+      arrow: {
+        frames: 12
+      },
+      lady: {
+        frames: 13,
+      },
+      old: {
+        frames: [14, 15, 14],
+        frameRate: 6
       }
     }
   });
@@ -175,9 +185,11 @@ let tileEngine;
     animations: spriteSheet.animations
   });
 
-  spawnGuard(7, 2);
-  spawnGuard(9, 2);
-    
+  spawnPerson(7, 2, 'guard');
+  spawnPerson(9, 2, 'guard');
+  spawnPerson(9, 4, 'old');
+  spawnPerson(13, 6, 'lady');
+
   let loop = GameLoop({ 
     update: function() { 
 
@@ -202,7 +214,7 @@ let tileEngine;
       playerAnimate();
 
       updateArrows();
-      updateGuards();
+      movePeople();
       
       message = 'x1r: ' + x1r; 
       // message += ' Y: ' + player.sprite.y; 
@@ -217,7 +229,7 @@ let tileEngine;
         arrow.render();
       });
       
-      renderGuards();
+      renderPeople();
       
       debug.render();
 
@@ -422,13 +434,14 @@ function collide_map(sprite, direction) {
 
 //
 //
-// ***** arrows *****
+// ***** /arrows *****
 //
 // 
 
 function updateArrows() {
   arrows.forEach((arrow, i)=> {
     arrow.update();
+    arrow.playAnimation('arrow');
     
     if (collide_map(arrow, "left") || collide_map(arrow, "right")) {
       arrow.ttl = 0;
@@ -441,15 +454,16 @@ function updateArrows() {
 function addArrow(x, y, dir) {
   let arrow = Sprite({
     x: x,
-    //y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
-    y: y + 12,
+    y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
+    //y: y + 12,
     dx: 6 * dir,
     scaleX: dir,
     scaleY: 1,
     width: 32,
-    height: 8,
+    height: 32,
     anchor: {x: 0, y: 0},
-    color: '#AB5236',
+    //color: '#AB5236',
+    animations: spriteSheet.animations,
     ttl: 70,
   });
   arrows.push(arrow);
@@ -463,97 +477,105 @@ function deleteArrow(arrow) {
 
 //
 //
-// ***** guards *****
+// ***** /people *****
 //
 // 
 
-function updateGuards() {
-  guards.forEach((guard, i)=> {
-    guard.update();
+function movePeople() {
+  people.forEach((person, i)=> {
+    person.update();
     
     
-    guard.dy += gravity;
-    guard.dx *= friction;
+    person.dy += gravity;
+    person.dx *= friction;
 
     
-    guard.dx -= guard.acc * guard.scaleX;
+    person.dx -= person.acc * person.scaleX;
 
     // jump
-    if (tileEngine.tileAtLayer('ground', guard) === 2) {
-      if (guard.checkJump) {
-        guard.checkJump = false;
+    if (tileEngine.tileAtLayer('ground', person) === 2) {
+      if (person.checkJump) {
+        person.checkJump = false;
         if (shouldJump()) {
-          guard.dy -= guard.boost;
+          person.dy -= person.boost;
         }
       }
     } else {
-      guard.checkJump = true;
+      person.checkJump = true;
     }
 
     // check collision up and down
-    if (guard.dy > 0) { // falling      
-      guard.dy = clamp(-guard.max_dy, guard.max_dy, guard.dy);
+    if (person.dy > 0) { // falling      
+      person.dy = clamp(-person.max_dy, person.max_dy, person.dy);
       
-      if (collide_map(guard, "down")) {
-        guard.dy = 0;
-        guard.y -= ((guard.y + guard.height + 1) % 8) - 1;
+      if (collide_map(person, "down")) {
+        person.dy = 0;
+        person.y -= ((person.y + person.height + 1) % 8) - 1;
       }
-    } else if (guard.dy < 0) {
+    } else if (person.dy < 0) {
 
 
-        if (collide_map(guard, "up")) {
-          guard.dy = 0;
+        if (collide_map(person, "up")) {
+          person.dy = 0;
         }
     }
 
     // check collision left and right
-    if (guard.dx < 0) {
-      guard.dx = clamp(-guard.max_dx, guard.max_dx, guard.dx);
+    if (person.dx < 0) {
+      person.dx = clamp(-person.max_dx, person.max_dx, person.dx);
       
-      if (collide_map(guard, "left")) {
-        guard.scaleX = -1
+      if (collide_map(person, "left")) {
+        person.scaleX = -1
       }
-    } else if (guard.dx > 0) {
-      guard.dx = clamp(-guard.max_dx, guard.max_dx, guard.dx);
+    } else if (person.dx > 0) {
+      person.dx = clamp(-person.max_dx, person.max_dx, person.dx);
       
-      if (collide_map(guard, "right")) {
-        guard.scaleX = 1
+      if (collide_map(person, "right")) {
+        person.scaleX = 1
       }
     }
 
-    guard.x += guard.dx;
-    guard.y += guard.dy;
+    person.x += person.dx;
+    person.y += person.dy;
 
-    arrows.forEach((arrow) => {
-      if (collides(arrow, guard)) {
-        guard.health -= 1;
-        arrow.ttl = 0; 
-      }
-    });
+    hitPerson(person);
 
-    if (guard.health <= 0) {
+    if (person.health <= 0) {
       destroyGuard(i);
     }
 
-    if (collides(guard, player)) {
+    if (collides(person, player)) {
       console.log("guard touched the player")
       //destroy(i);
       //g.shake = 9;
     }
 
-    guard.playAnimation('gWalk');
+    switch (person.type) {
+      case 'guard':
+        person.playAnimation('guard');
+        break;
+      case 'lady':
+        person.playAnimation('lady');
+        break;
+      case 'old':
+        person.playAnimation('old');
+        break;
+      default:
+        break;
+    }
+    
   });
 
 }
 
-function renderGuards() {
-  guards.forEach(guard => {
-    guard.render();
+function renderPeople() {
+  people.forEach(person => {
+    person.render();
   });
 }
 
-function spawnGuard(col, row) {
-  let guard = Sprite({
+function spawnPerson(col, row, type) {
+  let person = Sprite({
     x: 32 * col,
     y: 32 * row,
     dx: 0,
@@ -564,18 +586,36 @@ function spawnGuard(col, row) {
     height: 32,
     scaleX: randDir(),
     anchor: {x: 0.5, y: 0},
-    image: imageAssets['./img/guard.png'],
     health: 5,
     acc: 0.11,
     boost: 4.8,
     checkJump: true,
-    animations: spriteSheet.animations
+    animations: spriteSheet.animations,
+    type: type
   });
-  guards.push(guard);
+
+  people.push(person);
 }
 
+function hitPerson(person) {
+  arrows.forEach((arrow) => {
+    if (collides(arrow, person)) {
+      if (person.type === 'guard') {
+        person.health -= 1;
+      }
+      arrow.ttl = 0; 
+    }
+  });
+}
+//
+//
+// ***** /guards *****
+//
+//
+
+
 function destroyGuard(guard) {
-  guards.splice(guard, 1);
+  people.splice(guard, 1);
 }
 
 
