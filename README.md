@@ -2,6 +2,28 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
+### August 31st, 2023
+
+In the last days I was working on a couple of refactors:
+
+First, I consolidated the sprites in a single sprite sheet. This way I will end up only with two images: one for the tile map and one for the rest of the images.
+
+To do this, I created one SpriteSheet object, and defined animations for each type of entity that will be present on the screen: guards, coins, characters, etc.
+
+This helped me reduce the size of the final ZIP file like this:
+
+11465 bytes ➡️ 9609 bytes
+
+The second refactor was to replace the "guards" array with a "people" array (including the functions that manipulate this array).
+
+This way I ended up with a set of functions that control all the characters, the guards (enemies) and the rich people. The same code enables all the characters to navigate the scene.
+
+Right now I am at 9731 bytes.
+
+![](./gifs/2023-08-31-01.gif)
+
+I can do this!
+
 ### August 28th, 2023
 
 It's all about the shrinking!
