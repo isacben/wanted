@@ -159,8 +159,15 @@ let tileEngine;
         frames: [10, 11, 10],
         frameRate: 5
       },
+      arrow: {
+        frames: 12
+      },
       lady: {
         frames: 13,
+      },
+      old: {
+        frames: [14, 15, 14],
+        frameRate: 6
       }
     }
   });
@@ -180,8 +187,9 @@ let tileEngine;
 
   spawnPerson(7, 2, 'guard');
   spawnPerson(9, 2, 'guard');
-  spawnPerson(9, 4, 'lady');
-    
+  spawnPerson(9, 4, 'old');
+  spawnPerson(13, 6, 'lady');
+
   let loop = GameLoop({ 
     update: function() { 
 
@@ -433,6 +441,7 @@ function collide_map(sprite, direction) {
 function updateArrows() {
   arrows.forEach((arrow, i)=> {
     arrow.update();
+    arrow.playAnimation('arrow');
     
     if (collide_map(arrow, "left") || collide_map(arrow, "right")) {
       arrow.ttl = 0;
@@ -445,15 +454,16 @@ function updateArrows() {
 function addArrow(x, y, dir) {
   let arrow = Sprite({
     x: x,
-    //y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
-    y: y + 12,
+    y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
+    //y: y + 12,
     dx: 6 * dir,
     scaleX: dir,
     scaleY: 1,
     width: 32,
-    height: 8,
+    height: 32,
     anchor: {x: 0, y: 0},
-    color: '#AB5236',
+    //color: '#AB5236',
+    animations: spriteSheet.animations,
     ttl: 70,
   });
   arrows.push(arrow);
@@ -546,6 +556,10 @@ function movePeople() {
         break;
       case 'lady':
         person.playAnimation('lady');
+        break;
+      case 'old':
+        person.playAnimation('old');
+        break;
       default:
         break;
     }
