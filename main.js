@@ -20,7 +20,7 @@ import {
 const friction = 0.85;
 const gravity = 0.2;
 const acc = 0.25;
-const boost = 4;
+const boost = 4.1;
 
 let shot = false;
 let landed = false;
@@ -46,18 +46,18 @@ const l1 = [
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,1,0,0,0,1,0,0,0,0,1,1,1,1,0,1,
+  1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1,
+  1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,1,
+  1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,
+  1,1,1,0,0,0,0,0,0,0,0,2,1,1,1,1,
+  1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,
+  1,0,0,0,0,0,0,0,0,2,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
   1,0,2,0,0,0,0,0,0,0,0,0,0,2,0,1,
-  1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,0,0,0,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ];
 
@@ -71,7 +71,7 @@ const l2 = [
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,
+  1,1,0,0,0,0,1,1,1,1,0,0,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -189,6 +189,10 @@ let tileEngine;
   spawnPerson(9, 2, 'guard');
   spawnPerson(9, 4, 'old');
   spawnPerson(13, 6, 'lady');
+  spawnPerson(7, 2, 'guard');
+  spawnPerson(9, 2, 'guard');
+  spawnPerson(9, 4, 'old');
+  spawnPerson(13, 6, 'lady');
 
   let loop = GameLoop({ 
     update: function() { 
@@ -202,8 +206,10 @@ let tileEngine;
       // ----- Test -----
       hitbox.x = x1r;
       hitbox.y = y1r;
-      hitbox.width = x2r - x1r;
-      hitbox.height = y2r - y1r;
+
+      // +4 is because we are scaling from 1 pixels (PICO-8) to 4 (this game resolution)
+      hitbox.width = (x2r - x1r) + 4;
+      hitbox.height = (y2r - y1r) + 4; 
       hitbox.update()
       // ----- Test -----
 
@@ -312,7 +318,7 @@ function playerUpdate() {
       player.dy = 0;
       landed = true;
       falling = false;
-      player.y -= ((player.y + player.height + 1) % 8) - 1;
+      player.y -= ((player.y + player.height + 8) % 8) - 1;
     }
   } else if (player.dy < 0) {
       jumping = true;
@@ -393,31 +399,31 @@ function collide_map(sprite, direction) {
   let y2 = 0;
 
   if (direction === "left") {
-   x1=x-4;
-   y1=y+6;
+   x1=x - 4;
    x2=x;
+   y1=y+16;
    y2=y+h-4;
   } else if (direction === "right") { 
-     x1=x+w;
-     y1=y+6;
-     x2=x+w+4;
+     x1=x+w-4;
+     x2=x+w;
+     y1=y+16;
      y2=y+h-4;
   } else if (direction === "up") {
-     x1=x+4;
-     y1=y+4;
-     x2=x+w-12;
-     y2=y;
+     x1=x+8;
+     x2=x+w-8;
+     y1=y+20;
+     y2=y+16;
   } else if (direction === "down") { 
      x1=x+8;
-     y1=y+h-4;
      x2=x+w-8;
+     y1=y+h;
      y2=y+h;
   }
 
   // ----- Test -----
   x1r = x1;
-  y1r = y1;
   x2r = x2;
+  y1r = y1;
   y2r = y2;
   // ----- Test -----
 
@@ -507,10 +513,10 @@ function movePeople() {
     // check collision up and down
     if (person.dy > 0) { // falling      
       person.dy = clamp(-person.max_dy, person.max_dy, person.dy);
-      
+      person.acc = 0.11;
       if (collide_map(person, "down")) {
         person.dy = 0;
-        person.y -= ((person.y + person.height + 1) % 8) - 1;
+        person.y -= ((person.y + person.height + 8) % 8) - 1;
       }
     } else if (person.dy < 0) {
 
@@ -521,13 +527,13 @@ function movePeople() {
     }
 
     // check collision left and right
-    if (person.dx < 0) {
+    if (person.dx < 0 && person.dy <= 0) {
       person.dx = clamp(-person.max_dx, person.max_dx, person.dx);
       
       if (collide_map(person, "left")) {
         person.scaleX = -1
       }
-    } else if (person.dx > 0) {
+    } else if (person.dx > 0 && person.dy <= 0) {
       person.dx = clamp(-person.max_dx, person.max_dx, person.dx);
       
       if (collide_map(person, "right")) {
@@ -588,7 +594,7 @@ function spawnPerson(col, row, type) {
     anchor: {x: 0.5, y: 0},
     health: 5,
     acc: 0.11,
-    boost: 4.8,
+    boost: 4.7,
     checkJump: true,
     animations: spriteSheet.animations,
     type: type
@@ -631,5 +637,5 @@ function randDir() {
 // 
 
 function shouldJump() {
-  return Math.random() < 0.5 ? true : false;
+  return Math.random() < 0.75 ? true : false;
 }
