@@ -29,6 +29,9 @@ let jumping = false;
 let falling = false;
 let sliding = false;
 
+let maxHealth = 4;
+let cash = 0;
+
 // ----- Test -----
 let x1r = 0;
 let y1r = 0;
@@ -43,7 +46,7 @@ let hitbox = Sprite({
 
 let T = 0;
 const l1 = [
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
@@ -92,8 +95,8 @@ let debug = Text({
   text: message,
   font: '12px Arial',
   color: '#FFF1E8',
-  x: 8 * 4,
-  y: 8 * 4,
+  x: 40,
+  y: 36,
   textAlign: 'left'
 });
 
@@ -101,6 +104,7 @@ let debug = Text({
 
 let spriteSheet;
 let player;
+let sIcons = [];
 let arrows = [];
 let people = [];
 let tileEngine;
@@ -168,10 +172,16 @@ let tileEngine;
       old: {
         frames: [14, 15, 14],
         frameRate: 6
+      },
+      heart: {
+        frames: 16
+      },
+      coin: {
+        frames: 17
       }
     }
   });
-  
+
   player = Sprite({
     x: 8 * 4 + 16,
     y: 64 * 4,
@@ -182,8 +192,11 @@ let tileEngine;
     width: 32,
     height: 32,
     anchor: {x: 0.5, y: 0},
+    invisible: 0,
+    health: maxHealth,
     animations: spriteSheet.animations
   });
+
 
   spawnPerson(7, 2, 'guard');
   spawnPerson(9, 2, 'guard');
@@ -193,6 +206,8 @@ let tileEngine;
   spawnPerson(9, 2, 'guard');
   spawnPerson(9, 4, 'old');
   spawnPerson(13, 6, 'lady');
+
+  initStatus(player.health, 0);
 
   let loop = GameLoop({ 
     update: function() { 
@@ -218,6 +233,7 @@ let tileEngine;
       playerShoot();
       player.update();
       playerAnimate();
+      updateSIcons();
 
       updateArrows();
       movePeople();
@@ -231,6 +247,7 @@ let tileEngine;
     render: function() {
       tileEngine.render();
       player.render();
+      renderSIcons();
       arrows.forEach(arrow => {
         arrow.render();
       });
@@ -256,7 +273,7 @@ function camera(left, top) {
 
 //
 //
-// ***** player *****
+// ***** /player *****
 //
 // 
 
@@ -352,6 +369,16 @@ function playerUpdate() {
 
   player.x += player.dx;
   player.y += player.dy;
+
+  // invisibility
+  if (player.invisible > 0 && T % 3 === 0) {
+    player.color = '#000000';
+    if (T % 60 === 0) {
+      player.invisible--;
+    }
+  } else{
+    player.color = '';
+  }
 }
 
 function playerAnimate() {
@@ -380,10 +407,70 @@ function playerShoot() {
   }, {"handler": "keyup"}); 
 }
 
+function playerHit() {
+  player.invisible = 3;
+  player.health--;
+  
+  sIcons.shift();
+  reorgSIcons();
+
+  console.log("health: ", player.health);
+}
+
+function initStatus(health, coins) {
+  let extraPixels = 0;
+  for (let col = 0; col < health; col++) {
+    let heart = Sprite({
+      x: 32 * col - extraPixels,
+      y: 0,
+      width: 32,
+      height: 32,
+      type: 'heart',
+      animations: spriteSheet.animations
+    });
+    
+    sIcons.push(heart);
+    extraPixels += 8;
+  }
+
+  if (sIcons.length === health ) {
+    let coin = Sprite({
+      x: 32 * health - extraPixels,
+      y: 0,
+      width: 32,
+      height: 32,
+      type: 'coin',
+      animations:spriteSheet.animations
+    });
+    sIcons.push(coin);
+  }
+}
+
+// shift icons in the screen after an icon is removed/added
+function reorgSIcons() {
+  let extraPixels = 0;
+  sIcons.forEach((icon, col) => {
+    icon.x = 32 * col - extraPixels;
+    extraPixels += 8;
+  });
+}
+
+function updateSIcons() {
+  sIcons.forEach(icon => {
+    icon.update();
+    icon.playAnimation(icon.type);
+  });
+}
+
+function renderSIcons() {
+  sIcons.forEach(icon => {
+    icon.render();
+  });
+}
 
 //
 //
-// ***** map *****
+// ***** /map *****
 //
 // 
 
@@ -453,7 +540,7 @@ function updateArrows() {
       arrow.ttl = 0;
     }
 
-    deleteArrow(arrow);
+    deleteArrow(arrow, i);
   });
 }
 
@@ -475,9 +562,9 @@ function addArrow(x, y, dir) {
   arrows.push(arrow);
 }
 
-function deleteArrow(arrow) {
-  if (arrow.ttl <= 0) {
-    arrows.splice(arrow, 1);
+function deleteArrow(arrow, i) {
+  if (i > -1 && arrow.ttl <= 0) {
+    arrows.splice(i, 1);
   }
 }
 
@@ -550,10 +637,10 @@ function movePeople() {
       destroyGuard(i);
     }
 
-    if (collides(person, player)) {
-      console.log("guard touched the player")
-      //destroy(i);
-      //g.shake = 9;
+    if (collides(person, player) &&
+      !player.invisible &&
+      person.type === 'guard') {
+      playerHit();
     }
 
     switch (person.type) {
@@ -632,7 +719,7 @@ function randDir() {
 
 //
 //
-// ***** helpers *****
+// ***** /helpers *****
 //
 // 
 

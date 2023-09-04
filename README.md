@@ -2,6 +2,56 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
+Late TODO List
+
+[] Sprites
+    [X] Hearts (red and gray)
+    [x] Coins
+    [] Poor person
+    [] Better walls/floors sprites
+    [] Door to spawn characters
+    [] King
+[] Pixel art fonts
+[x] Implement health system
+    [x] Display hearts
+    [x] Invisible period
+    [x] Health counter
+[] Implement money in pocket (score)
+    [] Collision with the coins
+    [] Coins counter
+    [x] Display money count icon
+    [] Display money count
+[] Implement stealing the money from the rich:
+    [] Collision with the rich
+    [] Visual feedback of the arrows hitting the person
+    [] Coins jumping from the person to the floor and disappearing after some time
+[] Guards and rich people spawner
+[] Timer for the level
+[] State machine
+    [] HUD
+    [] Game
+    [] Timout: summary of money and animation with a poor person
+    [] Game over screen
+    [] Configure screen
+    [] Pause screen
+    [] Fight with the king
+    [] Beat the game screen
+[x] Bug: arrows disappear when one hits a wall
+[] Sound FX
+[] Background music
+
+### September 3rd, 2023
+
+Yesterday I couldn't work on the game, and today I am just trying to understand what I should do next. So, I will create a checklist that I will put above.
+
+But the last thing I did was I designed the room (might be the only room, but I will try to make more if I have time), and I optimized the collision detection for the characters (people and Robin), so everybody is able to better navigate the room.
+
+It was challenging to come up with a solution for the enemies and the rich people for them to be able to jump around without getting stuck anywhere.
+
+Things are looking better:
+
+![](./gifs/2023-09-03-01.gif)
+
 ### August 31st, 2023
 
 In the last days I was working on a couple of refactors:
