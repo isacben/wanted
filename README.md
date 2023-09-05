@@ -4,41 +4,43 @@ Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 
 
 Late TODO List
 
-[] Sprites
-    [X] Hearts (red and gray)
-    [x] Coins
-    [] Poor person
-    [] Better walls/floors sprites
-    [] Door to spawn characters
-    [] King
-[] Pixel art fonts
-[x] Implement health system
-    [x] Display hearts
-    [x] Invisible period
-    [x] Health counter
-[] Implement money in pocket (score)
-    [] Collision with the coins
-    [] Coins counter
-    [x] Display money count icon
-    [] Display money count
-[] Implement stealing the money from the rich:
-    [] Collision with the rich
-    [] Visual feedback of the arrows hitting the person
-    [] Coins jumping from the person to the floor and disappearing after some time
-[] Guards and rich people spawner
-[] Timer for the level
-[] State machine
-    [] HUD
-    [] Game
-    [] Timout: summary of money and animation with a poor person
-    [] Game over screen
-    [] Configure screen
-    [] Pause screen
-    [] Fight with the king
-    [] Beat the game screen
-[x] Bug: arrows disappear when one hits a wall
-[] Sound FX
-[] Background music
+- [ ] Sprites
+    - [x] Hearts (red and gray)
+    - [x] Coins
+    - [ ] Poor person
+    - [ ] Better walls/floors sprites
+    - [ ] Door to spawn characters
+    - [ ] King
+- [ ] Pixel art fonts
+- [x] Implement health system
+    - [x] Display hearts
+    - [x] Invisible period
+    - [x] Health counter
+- [ ] Implement money in pocket (score)
+    - [ ] Collision with the coins
+    - [x] Coins counter
+    - [x] Display money count icon
+    - [ ] Display money count
+- [ ] Implement stealing the money from the rich:
+    - [ ] Collision with the rich
+    - [ ] Visual feedback of the arrows hitting the person
+    - [x] Blink coins before they disappear
+    - [x] Coins jumping from the person to the floor and disappearing after some time
+    - [ ] +100 label when the money is collected
+- [ ] Guards and rich people spawner
+- [ ] Timer for the level
+- [ ] State machine
+    - [ ] HUD
+    - [ ] Game
+    - [ ] Tiemout: summary of money and animation with a poor person
+    - [ ] Game over screen
+    - [ ] Configure screen
+    - [ ] Pause screen
+    - [ ] Fight with the king
+    - [ ] Beat the game screen
+- [x] Bug: arrows disappear when one hits a wall
+- [ ] Sound FX
+- [ ] Background music
 
 ### September 3rd, 2023
 

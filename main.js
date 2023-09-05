@@ -240,7 +240,7 @@ let tileEngine;
       movePeople();
       updateCoins();
       
-      message = 'x1r: ' + x1r; 
+      // message = 'x1r: ' + x1r; 
       // message += ' Y: ' + player.sprite.y; 
       // message += ' DY: ' + player.sprite.dy; 
       debug.text = message;
@@ -373,13 +373,16 @@ function playerUpdate() {
   player.y += player.dy;
 
   // invisibility
-  if (player.invisible > 0 && T % 3 === 0) {
-    player.color = '#000000';
+  if (player.invisible > 0) {
+    if (T % 10 > 7) {
+      player.color = '#000000';
+    } else{
+    player.color = '';
+    }
+
     if (T % 60 === 0) {
       player.invisible--;
     }
-  } else{
-    player.color = '';
   }
 }
 
@@ -716,7 +719,6 @@ function spawnCoins(amount, x, y) {
     let coin = Sprite({
       x: x,
       y: y,
-      dx: 0,
       dy: 0,
       max_dy: 4,
       width: 32,
@@ -739,7 +741,6 @@ function updateCoins() {
     coin.playAnimation('coin');
 
     coin.dy += gravity;
-    coin.dx *= friction;
 
     // check collision up and down
     if (coin.dy > 0) { // falling      
@@ -762,8 +763,23 @@ function updateCoins() {
         }
     }
 
-    //coin.x += coin.dx;
     coin.y += coin.dy;
+
+    // blink coins before they disappear
+    if (coin.ttl < 40) {
+      if (T % 10 > 6) {
+        coin.color = '#000000';
+      } else {
+        coin.color = '';
+      }
+    }
+
+    // player collects the coin
+    if (collides(coin, player)) {
+      coin.ttl = 0;
+      cash += 100;
+      message = 'cash: ' + cash;
+    }
 
     deleteCoins(coin, i);
   });
