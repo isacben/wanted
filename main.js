@@ -107,6 +107,7 @@ let player;
 let sIcons = [];
 let arrows = [];
 let people = [];
+let coins = [];
 let tileEngine;
 
 
@@ -237,6 +238,7 @@ let tileEngine;
 
       updateArrows();
       movePeople();
+      updateCoins();
       
       message = 'x1r: ' + x1r; 
       // message += ' Y: ' + player.sprite.y; 
@@ -253,7 +255,7 @@ let tileEngine;
       });
       
       renderPeople();
-      
+      renderCoins();
       debug.render();
 
       // ----- Test -----
@@ -418,10 +420,9 @@ function playerHit() {
 }
 
 function initStatus(health, coins) {
-  let extraPixels = 0;
   for (let col = 0; col < health; col++) {
     let heart = Sprite({
-      x: 32 * col - extraPixels,
+      x: 0,
       y: 0,
       width: 32,
       height: 32,
@@ -430,12 +431,11 @@ function initStatus(health, coins) {
     });
     
     sIcons.push(heart);
-    extraPixels += 8;
   }
 
   if (sIcons.length === health ) {
     let coin = Sprite({
-      x: 32 * health - extraPixels,
+      x: 0,
       y: 0,
       width: 32,
       height: 32,
@@ -444,6 +444,8 @@ function initStatus(health, coins) {
     });
     sIcons.push(coin);
   }
+
+  reorgSIcons();
 }
 
 // shift icons in the screen after an icon is removed/added
@@ -695,11 +697,90 @@ function hitPerson(person) {
     if (collides(arrow, person)) {
       if (person.type === 'guard') {
         person.health -= 1;
+      } else {
+        spawnCoins(1, person.x, person.y);
       }
       arrow.ttl = 0; 
     }
   });
 }
+
+//
+//
+// ***** /coins *****
+//
+// 
+
+function spawnCoins(amount, x, y) {
+  for (let i = 0; i < amount; i++) {
+    let coin = Sprite({
+      x: x,
+      y: y,
+      dx: 0,
+      dy: 0,
+      max_dy: 4,
+      width: 32,
+      height: 32,
+      bounce: 3,
+      boost: 3,
+      ttl: 200,
+      anchor: { x: 0.5, y: 0 },
+      animations: spriteSheet.animations
+    });
+
+    coins.push(coin);
+    coin.dy -= coin.boost; // shoot coin up
+  }
+}
+
+function updateCoins() {
+  coins.forEach((coin, i) => {
+    coin.update();
+    coin.playAnimation('coin');
+
+    coin.dy += gravity;
+    coin.dx *= friction;
+
+    // check collision up and down
+    if (coin.dy > 0) { // falling      
+      coin.dy = clamp(-coin.max_dy, coin.max_dy, coin.dy);
+      
+      if (collide_map(coin, "down")) {
+        if (coin.bounce > 0 && coin.dy < 1) {
+          coin.boost *= 0.6;
+          coin.bounce--;
+          coin.dy -= coin.boost;
+        } else {
+          coin.dy = 0;
+          coin.y -= ((coin.y + coin.height + 8) % 8) - 1;
+        }
+        
+      }
+    } else if (coin.dy < 0) {
+        if (collide_map(coin, "up")) {
+          coin.dy = 0;
+        }
+    }
+
+    //coin.x += coin.dx;
+    coin.y += coin.dy;
+
+    deleteCoins(coin, i);
+  });
+}
+
+function renderCoins() {
+  coins.forEach(coin => {
+    coin.render();
+  });
+}
+
+function deleteCoins(coin, i) {
+  if (i > -1 && coin.ttl <= 0) {
+    coins.splice(i, 1);
+  }
+}
+
 //
 //
 // ***** /guards *****
