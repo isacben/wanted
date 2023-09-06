@@ -833,7 +833,9 @@ function randDir() {
 //
 
 function titleScreen() {
-  print("> Robin Hood", 32*6, 60*4, "#FFF1E8");
+  print("> Steal from the rich", 130, 60*4, "#FFF1E8");
+  print("  Settings", 130, 68*4, "#FFF1E8");
+  print("  Credits", 130, 76*4, "#FFF1E8");
 }
 
 //
@@ -1148,11 +1150,7 @@ const letters = {
     []
   ],
   ' ': [
-    [,,],
-    [,,],
-    [,,],
-    [,,],
-    []
+    [,,]
   ],
   '>': [
     [1],
