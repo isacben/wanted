@@ -45,6 +45,7 @@ let hitbox = Sprite({
 // ----- Test -----
 
 let T = 0;
+let state = "title";
 const l1 = [
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -219,50 +220,58 @@ let tileEngine;
       //  g.shake *= 0.5;
       //}
 
-      // ----- Test -----
-      hitbox.x = x1r;
-      hitbox.y = y1r;
+      if (state === "title") {
+        titleScreen();
+      } else if (state === "game") {
+        // ----- Test -----
+        hitbox.x = x1r;
+        hitbox.y = y1r;
 
-      // +4 is because we are scaling from 1 pixels (PICO-8) to 4 (this game resolution)
-      hitbox.width = (x2r - x1r) + 4;
-      hitbox.height = (y2r - y1r) + 4; 
-      hitbox.update()
-      // ----- Test -----
+        // +4 is because we are scaling from 1 pixels (PICO-8) to 4 (this game resolution)
+        hitbox.width = (x2r - x1r) + 4;
+        hitbox.height = (y2r - y1r) + 4; 
+        hitbox.update()
+        // ----- Test -----
 
-      T += 1;
-      playerUpdate();
-      playerShoot();
-      player.update();
-      playerAnimate();
-      updateSIcons();
+        T += 1;
+        playerUpdate();
+        playerShoot();
+        player.update();
+        playerAnimate();
+        updateSIcons();
 
-      updateArrows();
-      movePeople();
-      updateCoins();
-      
-      // message = 'x1r: ' + x1r; 
-      // message += ' Y: ' + player.sprite.y; 
-      // message += ' DY: ' + player.sprite.dy; 
-      debug.text = message;
+        updateArrows();
+        movePeople();
+        updateCoins();
+        
+        // message = 'x1r: ' + x1r; 
+        // message += ' Y: ' + player.sprite.y; 
+        // message += ' DY: ' + player.sprite.dy; 
+        debug.text = message;
+      }
     },
 
     render: function() {
-      tileEngine.render();
-      player.render();
-      renderSIcons();
-      arrows.forEach(arrow => {
-        arrow.render();
-      });
-      
-      renderPeople();
-      renderCoins();
-      debug.render();
+      if (state === "title") {
+        titleScreen();
+      } else if (state === "game") {
+        tileEngine.render();
+        player.render();
+        renderSIcons();
+        arrows.forEach(arrow => {
+          arrow.render();
+        });
+        
+        renderPeople();
+        renderCoins();
+        debug.render();
 
-      // ----- Test -----
-      hitbox.render();
-      // ----- Test -----
+        // ----- Test -----
+        hitbox.render();
+        // ----- Test -----
 
-      print("abcdefghijklmnopqrstuvwxyz", 36, 32*2, '#FFF1E8');
+        //print("abcdefghijklmnopqrstuvwxyz", 36, 32*2, '#FFF1E8');
+      }
     }
   });
 
@@ -474,7 +483,7 @@ function renderSIcons() {
     icon.render();
   });
 
-  print("0123456789", (sIcons.length * 32) - (sIcons.length * 8) + 12, 8, '#FFF1E8');
+  print("*" + cash, (sIcons.length * 32) - (sIcons.length * 8) + 12, 8, '#FFF1E8');
 }
 
 //
@@ -817,6 +826,15 @@ function randDir() {
   return Math.random() < 0.5 ? -1 : 1
 }
 
+//
+//
+// ***** /states *****
+//
+//
+
+function titleScreen() {
+  print("> Robin Hood", 32*6, 60*4, "#FFF1E8");
+}
 
 //
 //
@@ -1121,6 +1139,27 @@ const letters = {
     [,1],
     [1],
     [1,1,1]
+  ],
+  '*': [
+    [],
+    [1,,1],
+    [,1],
+    [1,,1],
+    []
+  ],
+  ' ': [
+    [,,],
+    [,,],
+    [,,],
+    [,,],
+    []
+  ],
+  '>': [
+    [1],
+    [1,1],
+    [1,1,1],
+    [1,1],
+    [1]
   ]
 }
 

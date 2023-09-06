@@ -20,7 +20,7 @@ Late TODO List
     - [x] Collision with the coins
     - [x] Coins counter
     - [x] Display money count icon
-    - [ ] Display money count
+    - [x] Display money count
     - [ ] +100 label when the money is collected
 - [ ] Implement stealing the money from the rich:
     - [ ] Collision with the rich
