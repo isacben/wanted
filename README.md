@@ -11,22 +11,22 @@ Late TODO List
     - [ ] Better walls/floors sprites
     - [ ] Door to spawn characters
     - [ ] King
-- [ ] Pixel art fonts
+- [x] Pixel art fonts
 - [x] Implement health system
     - [x] Display hearts
     - [x] Invisible period
     - [x] Health counter
 - [ ] Implement money in pocket (score)
-    - [ ] Collision with the coins
+    - [x] Collision with the coins
     - [x] Coins counter
     - [x] Display money count icon
     - [ ] Display money count
+    - [ ] +100 label when the money is collected
 - [ ] Implement stealing the money from the rich:
     - [ ] Collision with the rich
     - [ ] Visual feedback of the arrows hitting the person
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
-    - [ ] +100 label when the money is collected
 - [ ] Guards and rich people spawner
 - [ ] Timer for the level
 - [ ] State machine
@@ -41,6 +41,25 @@ Late TODO List
 - [x] Bug: arrows disappear when one hits a wall
 - [ ] Sound FX
 - [ ] Background music
+
+### September 6th, 2023
+
+I have been having good progress:
+
+I implemented:
+
+- health or lives for the player
+- graphics that show the player's lives (harts)
+- blinking of the player (invisibility) when he gets hit by a guard
+- spawning of coins with animation
+- collection of those coins
+- blinking for the coins when they are going to disappear
+- a print function to display text on specific coordinates of the screen, with the specified color
+- pixel art fonts
+
+I am happy with this progress, and the game is starting to feel fun:
+
+![](./gifs/2023-09-06-01.gif)
 
 ### September 3rd, 2023
 
