@@ -46,6 +46,7 @@ let hitbox = Sprite({
 
 let T = 0;
 let state = "title";
+let menuPointer = 1;
 const l1 = [
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
