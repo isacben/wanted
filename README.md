@@ -2,6 +2,8 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
+npx js13k-packer index.html dist
+
 subpixel — Today at 9:15 AM
 Yup, a pixel array isn't a bad way to go, especially with JavaScript's sparse array notation. This is where the code golfing fun starts though! If you find yourself running out of space later, and needing to do a whole font of 4x5 letters, try this nonsense: 
 'c444e'.split('').map(c=>parseInt(c,16).toString(2).padStart(4,'0').split('')) 

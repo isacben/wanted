@@ -29,7 +29,7 @@ let jumping = false;
 let falling = false;
 let sliding = false;
 
-let maxHealth = 4;
+let lives = 3;
 let cash = 0;
 
 // ----- Test -----
@@ -48,10 +48,11 @@ let T = 0;
 let state = "title";
 let menuPointer = 0;
 let menu = [
-  "Steal from the rich",
-  "Music ",
-  "Sound effects ",
-  "Credits"
+  "steal from the rich",
+  "music",
+  "sounds",
+  "controls",
+  "credits"
 ];
 let music = 1;
 let fx = 1;
@@ -205,7 +206,7 @@ let tileEngine;
     height: 32,
     anchor: {x: 0.5, y: 0},
     invisible: 0,
-    health: maxHealth,
+    health: lives,
     animations: spriteSheet.animations
   });
 
@@ -218,8 +219,6 @@ let tileEngine;
   spawnPerson(9, 2, 'guard');
   spawnPerson(9, 4, 'old');
   spawnPerson(13, 6, 'lady');
-
-  initStatus(player.health, 0);
 
   let loop = GameLoop({ 
     update: function() { 
@@ -342,10 +341,11 @@ function playerUpdate() {
   }
   
   // jump
-  if (keyPressed('x') && landed) {
+  onKey('x', function() {
+    if (landed) {
     player.dy -= boost;
     landed = false;
-  }
+  }});
 
   // check collision up and down
   if (player.dy > 0) { // falling
@@ -436,6 +436,10 @@ function playerShoot() {
 function playerHit() {
   player.invisible = 3;
   player.health--;
+
+  if (player.health < 1) {
+    state = "title";
+  }
   
   sIcons.shift();
   reorgSIcons();
@@ -443,7 +447,7 @@ function playerHit() {
   console.log("health: ", player.health);
 }
 
-function initStatus(health, coins) {
+function initStatus(health) {
   for (let col = 0; col < health; col++) {
     let heart = Sprite({
       x: 0,
@@ -843,7 +847,6 @@ function randDir() {
 //
 
 function updateTitleScreen() {
-  // controls
   onKey('arrowup', function() {
     menuPointer--;
     if (menuPointer < 0) menuPointer = menu.length - 1;
@@ -854,9 +857,10 @@ function updateTitleScreen() {
     if (menuPointer > menu.length - 1) menuPointer = 0;
   });
 
-  onKey('enter', function() {
+  onKey(['enter', 'z', 'x', 'space'], function() {
     switch (menuPointer) {
       case 0:
+        initGame();
         state = "game";
         break;
       case 1:
@@ -866,6 +870,8 @@ function updateTitleScreen() {
         fx = 1 - fx;
         break;
       case 3:
+        break;
+      case 4:
         break;
     }
   });
@@ -893,6 +899,13 @@ function titleScreen() {
 //
 // 
 
+function initGame() {
+  T = 0;
+  player.health = lives;
+  cash = 0;
+  sIcons = [];
+  initStatus(player.health);
+}
 function shouldJump() {
   return Math.random() < 0.75 ? true : false;
 }
@@ -906,7 +919,7 @@ function print(string, posX, posY, color, bgColor) {
 
   for (let i = 0; i < string.length; i++) {
     let letter = letters[string.charAt(i)];
-    if (letter) { // because there's letters I didn't do
+    if (letter) {
         needed.push(letter);
     }
   }
