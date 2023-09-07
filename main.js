@@ -46,7 +46,16 @@ let hitbox = Sprite({
 
 let T = 0;
 let state = "title";
-let menuPointer = 1;
+let menuPointer = 0;
+let menu = [
+  "Steal from the rich",
+  "Music ",
+  "Sound effects ",
+  "Credits"
+];
+let music = 1;
+let fx = 1;
+
 const l1 = [
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -222,7 +231,7 @@ let tileEngine;
       //}
 
       if (state === "title") {
-        titleScreen();
+        updateTitleScreen();
       } else if (state === "game") {
         // ----- Test -----
         hitbox.x = x1r;
@@ -833,10 +842,49 @@ function randDir() {
 //
 //
 
+function updateTitleScreen() {
+  // controls
+  onKey('arrowup', function() {
+    menuPointer--;
+    if (menuPointer < 0) menuPointer = menu.length - 1;
+  });
+
+  onKey('arrowdown', function() {
+    menuPointer++;
+    if (menuPointer > menu.length - 1) menuPointer = 0;
+  });
+
+  onKey('enter', function() {
+    switch (menuPointer) {
+      case 0:
+        state = "game";
+        break;
+      case 1:
+        music = 1 - music;
+        break;
+      case 2:
+        fx = 1 - fx;
+        break;
+      case 3:
+        break;
+    }
+  });
+
+  (music) ? menu[1] = "music on" : menu[1] = "music off";
+  (fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
+
+  T++;
+}
+
 function titleScreen() {
-  print("> Steal from the rich", 130, 60*4, "#FFF1E8");
-  print("  Settings", 130, 68*4, "#FFF1E8");
-  print("  Credits", 130, 76*4, "#FFF1E8");
+  menu.forEach((label, i) => {
+    if (menuPointer === i) {
+      print(">", 100 + 4*Math.sin(T/12), 280 + i*28, "#FFF1E8");
+      print(label, 130, 280 + i*28, "#FFF1E8", "gray");
+    } else {
+      print(label, 130, 280 + i*28, "#FFF1E8");
+    }
+  });
 }
 
 //
@@ -849,7 +897,7 @@ function shouldJump() {
   return Math.random() < 0.75 ? true : false;
 }
 
-function print(string, posX, posY, color) {
+function print(string, posX, posY, color, bgColor) {
   context.imageSmoothingEnabled = false;
 
   let needed = [];
@@ -862,13 +910,21 @@ function print(string, posX, posY, color) {
         needed.push(letter);
     }
   }
-
+  
   context.fillStyle = color;
   let currX = 0;
   for (let i = 0; i < needed.length; i++) {
       let letter = needed[i];
       let currY = 0;
       let addX = 0;
+
+      if (bgColor) {
+        context.fillStyle = bgColor;
+        context.fillRect(posX + currX - 4,
+          posY + currY - 4, 20, 28);
+          context.fillStyle = color;
+      }
+
       for (let y = 0; y < letter.length; y++) {
           let row = letter[y];
           for (let x = 0; x < row.length; x++) {
@@ -1151,6 +1207,10 @@ const letters = {
     []
   ],
   ' ': [
+    [,,],
+    [,,],
+    [,,],
+    [,,],
     [,,]
   ],
   '>': [

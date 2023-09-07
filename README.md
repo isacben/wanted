@@ -2,6 +2,13 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
+subpixel — Today at 9:15 AM
+Yup, a pixel array isn't a bad way to go, especially with JavaScript's sparse array notation. This is where the code golfing fun starts though! If you find yourself running out of space later, and needing to do a whole font of 4x5 letters, try this nonsense: 
+'c444e'.split('').map(c=>parseInt(c,16).toString(2).padStart(4,'0').split('')) 
+That assumes it's unpacking each line of your bitmap, 4 bits, from a single hex character, so 'c444e' is your number 1. You end up with an array like you have above, but with '0' and '1'. It's a lot of unpacking code, but if you did dozens of characters, it'd break even at some point, and then pull ahead. Happy golfing!
+
+
+
 Late TODO List
 
 - [ ] Sprites
