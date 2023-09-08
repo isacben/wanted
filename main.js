@@ -121,6 +121,13 @@ let arrows = [];
 let people = [];
 let coins = [];
 let tileEngine;
+let bg = Sprite({
+  x: 0,
+  y: 0,
+  width: 560,
+  height: 560,
+  color: "#008751"
+});
 
 
 (async () => {
@@ -497,7 +504,7 @@ function renderSIcons() {
     icon.render();
   });
 
-  print("*" + cash, (sIcons.length * 32) - (sIcons.length * 8) + 12, 8, '#FFF1E8');
+  print(normal, 4, "*" + cash, (sIcons.length * 32) - (sIcons.length * 8) + 12, 8, '#FFF1E8');
 }
 
 //
@@ -847,6 +854,8 @@ function randDir() {
 //
 
 function updateTitleScreen() {
+  bg.color = "#1D2B53";
+
   onKey('arrowup', function() {
     menuPointer--;
     if (menuPointer < 0) menuPointer = menu.length - 1;
@@ -883,12 +892,16 @@ function updateTitleScreen() {
 }
 
 function titleScreen() {
+  bg.render();
+
+  print(title, 8, "WANTED", 110, 80 + 28, "#FFF1E8");
+
   menu.forEach((label, i) => {
     if (menuPointer === i) {
-      print(">", 100 + 4*Math.sin(T/12), 280 + i*28, "#FFF1E8");
-      print(label, 130, 280 + i*28, "#FFF1E8", "gray");
+      print(normal, 4, ">", 100 + 4*Math.sin(T/12), 280 + i*28, "#008751");
+      print(normal, 4, label, 130, 280 + i*28, "#FFF1E8", "#008751");
     } else {
-      print(label, 130, 280 + i*28, "#FFF1E8");
+      print(normal, 4, label, 130, 280 + i*28, "#FFF1E8");
     }
   });
 }
@@ -910,15 +923,14 @@ function shouldJump() {
   return Math.random() < 0.75 ? true : false;
 }
 
-function print(string, posX, posY, color, bgColor) {
+function print(font, size, string, posX, posY, color, bgColor) {
   context.imageSmoothingEnabled = false;
 
   let needed = [];
   string = string.toUpperCase();
-  let size = 4;
 
   for (let i = 0; i < string.length; i++) {
-    let letter = letters[string.charAt(i)];
+    let letter = font[string.charAt(i)];
     if (letter) {
         needed.push(letter);
     }
@@ -934,7 +946,7 @@ function print(string, posX, posY, color, bgColor) {
       if (bgColor) {
         context.fillStyle = bgColor;
         context.fillRect(posX + currX - 4,
-          posY + currY - 4, 20, 28);
+          posY + currY - 4, 5 * size, 28);
           context.fillStyle = color;
       }
 
@@ -953,13 +965,14 @@ function print(string, posX, posY, color, bgColor) {
   }
 }
 
+
 //
 //
 // ***** /font *****
 //
 // 
 
-const letters = {
+const normal = {
   '0': [
       [1,1,1],
       [1,,1],
@@ -1235,3 +1248,66 @@ const letters = {
   ]
 }
 
+const title = {
+  'W': [
+    [1,,1,1,,1,1],
+    [1,1,,1,1,,1,1],
+    [1,1,,1,1,,1,1],
+    [1,1,,1,1,,1,1],
+    [1,1,,1,1,,1,1],
+    [1,1,,1,1,,1],
+    [1,1,1,1,1,1,1],
+    [,1,1,,1,1],
+  ],
+  'A': [
+    [1,1,1,1,1],
+    [,1,,1,1,],
+    [1,1,,1,1],
+    [1,1,1,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [,,,1]
+  ],
+  'N': [
+    [1,,1,1],
+    [1,1,1,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1],
+    [1,1,,1],
+    [1,1,,1,1]
+  ],
+  'T': [
+    [1,1,1,1,1],
+    [1,1,1,1],
+    [,,1],
+    [,1,1],
+    [,1,1],
+    [,1,1],
+    [,1,1],
+    [,,1,1]
+  ],
+  'E': [
+    [,,1,1,1],
+    [,1,,1,1],
+    [1,1],
+    [1,1,,,1],
+    [1,1,1,1,1],
+    [1,1],
+    [1,1,,,1],
+    [,1,1,1,]
+  ],
+  'D': [
+    [1,,1,1],
+    [1,1,1,1,1,],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,1,,1,1],
+    [1,,1,1]
+  ]
+}
