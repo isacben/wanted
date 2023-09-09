@@ -52,47 +52,37 @@ let menu = [
   "music",
   "sounds",
   "controls",
-  "credits"
 ];
 let music = 1;
 let fx = 1;
 
 const l1 = [
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
-  1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1,
-  1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,
-  1,1,1,0,0,0,0,0,0,0,0,2,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,2,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,2,0,0,0,0,0,0,0,0,0,0,2,0,1,
+  ,,,,,,,,,,,,,,1,1,
+  1,,,,,,,,,,,,,,,1,
+  1,,,,,,,,,,,,,,,1,
+  1,,,,,,,,,,1,1,1,1,1,1,
+  1,,,,,,,,2,,,,,,,1,
+  1,,,,1,1,1,1,1,1,1,1,1,,,1,
+  1,1,1,,,,,,,,,,,,,1,
+  1,,,2,,,,,,,,,,,,1,
+  1,,,1,1,1,1,1,1,1,1,,,,,1,
+  1,,,,,,,,,,,,2,,,1,
+  1,1,1,,,,,,,,,2,1,1,1,1,
+  1,,,,,,,,,,1,1,,,,1,
+  1,,,,,,,,,2,,,,,,1,
+  1,,,1,1,1,1,1,1,1,1,1,1,,,1,
+  1,,2,,,,,,,,,,,2,,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ];
 
-const l2 = [
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,0,0,0,0,1,1,1,1,0,0,1,1,1,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+const ttm = [
+  ,,,,,,,,,,,,,,,,
+  ,,,,,,,,,,,,,,,,
+  ,,,,,,,,,,,,,,,,
+  ,,,,1,,1,,,1,1,,1,,,,
+  ,,1,1,,1,1,,1,1,,1,1,1,,,
+  ,,,1,1,1,1,1,1,1,,1,1,,,,
+  ,,,,,1,,,1,
 ];
 
 
@@ -102,18 +92,6 @@ initKeys();
 canvas.style.position = 'absolute';
 camera(10, 10);
 
-let message = "debug...";
-let debug = Text({
-  text: message,
-  font: '12px Arial',
-  color: '#FFF1E8',
-  x: 40,
-  y: 36,
-  textAlign: 'left'
-});
-
-
-
 let spriteSheet;
 let player;
 let sIcons = [];
@@ -121,13 +99,6 @@ let arrows = [];
 let people = [];
 let coins = [];
 let tileEngine;
-let bg = Sprite({
-  x: 0,
-  y: 0,
-  width: 560,
-  height: 560,
-  color: "#008751"
-});
 
 
 (async () => {
@@ -152,7 +123,11 @@ let bg = Sprite({
     // layer object
     layers: [{
       name: 'ground',
-      data: l1 
+      data: l1
+      }, 
+      {
+        name: "bg",
+        data: ttm
     }]
   });
 
@@ -259,11 +234,6 @@ let bg = Sprite({
         updateArrows();
         movePeople();
         updateCoins();
-        
-        // message = 'x1r: ' + x1r; 
-        // message += ' Y: ' + player.sprite.y; 
-        // message += ' DY: ' + player.sprite.dy; 
-        debug.text = message;
       }
     },
 
@@ -271,7 +241,7 @@ let bg = Sprite({
       if (state === "title") {
         titleScreen();
       } else if (state === "game") {
-        tileEngine.render();
+        tileEngine.renderLayer("ground");
         player.render();
         renderSIcons();
         arrows.forEach(arrow => {
@@ -280,7 +250,6 @@ let bg = Sprite({
         
         renderPeople();
         renderCoins();
-        debug.render();
 
         // ----- Test -----
         hitbox.render();
@@ -450,8 +419,6 @@ function playerHit() {
   
   sIcons.shift();
   reorgSIcons();
-
-  console.log("health: ", player.health);
 }
 
 function initStatus(health) {
@@ -812,7 +779,6 @@ function updateCoins() {
     if (collides(coin, player)) {
       coin.ttl = 0;
       cash += 100;
-      message = 'cash: ' + cash;
     }
 
     deleteCoins(coin, i);
@@ -854,8 +820,6 @@ function randDir() {
 //
 
 function updateTitleScreen() {
-  bg.color = "#1D2B53";
-
   onKey('arrowup', function() {
     menuPointer--;
     if (menuPointer < 0) menuPointer = menu.length - 1;
@@ -892,18 +856,21 @@ function updateTitleScreen() {
 }
 
 function titleScreen() {
-  bg.render();
+  tileEngine.renderLayer("bg");
 
-  print(title, 8, "WANTED", 110, 80 + 28, "#FFF1E8");
+  print(title, 8, "WANTED", 106, 86 + 28, "#000000");
+  print(title, 8, "WANTED", 110, 80 + 28, "#AB5236");
 
   menu.forEach((label, i) => {
     if (menuPointer === i) {
-      print(normal, 4, ">", 100 + 4*Math.sin(T/12), 280 + i*28, "#008751");
+      print(normal, 4, ">", 100 + 4*Math.sin(T/12), 280 + i*28, "#AB5236");
       print(normal, 4, label, 130, 280 + i*28, "#FFF1E8", "#008751");
     } else {
       print(normal, 4, label, 130, 280 + i*28, "#FFF1E8");
     }
   });
+
+  print(normal, 4, "2023 Isaac Benitez", 120, 450, "#5F574F");
 }
 
 //
@@ -919,6 +886,7 @@ function initGame() {
   sIcons = [];
   initStatus(player.health);
 }
+
 function shouldJump() {
   return Math.random() < 0.75 ? true : false;
 }
@@ -1135,7 +1103,7 @@ const normal = {
     [1,,1]
   ],
   'N': [
-    [1,1,],
+    [1,1],
     [1,,1],
     [1,,1],
     [1,,1],
@@ -1156,7 +1124,7 @@ const normal = {
     [1]
   ],
   'Q': [
-    [,1,],
+    [,1],
     [1,,1],
     [1,,1],
     [1,1],
@@ -1229,15 +1197,10 @@ const normal = {
     [],
     [1,,1],
     [,1],
-    [1,,1],
-    []
+    [1,,1]
   ],
   ' ': [
-    [,,],
-    [,,],
-    [,,],
-    [,,],
-    [,,]
+    [,]
   ],
   '>': [
     [1],
@@ -1261,7 +1224,7 @@ const title = {
   ],
   'A': [
     [1,1,1,1,1],
-    [,1,,1,1,],
+    [,1,,1,1],
     [1,1,,1,1],
     [1,1,1,1,1],
     [1,1,,1,1],
@@ -1298,11 +1261,11 @@ const title = {
     [1,1,1,1,1],
     [1,1],
     [1,1,,,1],
-    [,1,1,1,]
+    [,1,1,1]
   ],
   'D': [
-    [1,,1,1],
-    [1,1,1,1,1,],
+    [1,1,1,1],
+    [1,1,1,1,1],
     [1,1,,1,1],
     [1,1,,1,1],
     [1,1,,1,1],
