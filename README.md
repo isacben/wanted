@@ -17,7 +17,7 @@ Late TODO List
     - [x] Hearts (red and gray)
     - [x] Coins
     - [ ] Poor person
-    - [ ] Better walls/floors sprites
+    - [x] Better walls/floors sprites
     - [ ] Door to spawn characters
     - [ ] King
 - [x] Pixel art fonts
@@ -37,13 +37,14 @@ Late TODO List
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
 - [ ] Guards and rich people spawner
+- [ ] Beat guards particles effect
 - [ ] Timer for the level
 - [ ] State machine
-    - [ ] HUD
-    - [ ] Game
+    - [x] HUD
+    - [ ] Controls screen
+    - [x] Game
     - [ ] Tiemout: summary of money and animation with a poor person
     - [ ] Game over screen
-    - [ ] Configure screen
     - [ ] Pause screen
     - [ ] Fight with the king
     - [ ] Beat the game screen

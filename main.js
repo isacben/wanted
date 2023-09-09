@@ -42,6 +42,15 @@ let hitbox = Sprite({
   color: 'cyan',
 });
 
+let pBox = Sprite({
+  x: 256,
+  y: 256,
+  width: 200,
+  height: 160,
+  anchor: {x: 0.5, y: 0.5},
+  color: '#1D2B53',
+});
+
 // ----- Test -----
 
 let T = 0;
@@ -61,17 +70,17 @@ const l1 = [
   1,,,,,,,,,,,,,,,1,
   1,,,,,,,,,,,,,,,1,
   1,,,,,,,,,,1,1,1,1,1,1,
-  1,,,,,,,,2,,,,,,,1,
+  1,,,,,,,,5,,,,,,,1,
   1,,,,1,1,1,1,1,1,1,1,1,,,1,
   1,1,1,,,,,,,,,,,,,1,
-  1,,,2,,,,,,,,,,,,1,
+  1,,,5,,,,,,,,,,,,1,
   1,,,1,1,1,1,1,1,1,1,,,,,1,
-  1,,,,,,,,,,,,2,,,1,
-  1,1,1,,,,,,,,,2,1,1,1,1,
+  1,,,,,,,,,,,,5,,,1,
+  1,1,1,,,,,,,,,5,1,1,1,1,
   1,,,,,,,,,,1,1,,,,1,
-  1,,,,,,,,,2,,,,,,1,
+  1,,,,,,,,,5,,,,,,1,
   1,,,1,1,1,1,1,1,1,1,1,1,,,1,
-  1,,2,,,,,,,,,,,2,,1,
+  1,,5,,,,,,,,,,,5,,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ];
 
@@ -79,10 +88,9 @@ const ttm = [
   ,,,,,,,,,,,,,,,,
   ,,,,,,,,,,,,,,,,
   ,,,,,,,,,,,,,,,,
-  ,,,,1,,1,,,1,1,,1,,,,
-  ,,1,1,,1,1,,1,1,,1,1,1,,,
-  ,,,1,1,1,1,1,1,1,,1,1,,,,
-  ,,,,,1,,,1,
+  ,,3,1,1,1,1,1,1,1,1,2,1,2,,,
+  ,,3,1,,,1,,1,1,1,1,1,2,,,
+  ,,3,1,1,1,1,1,1,1,1,1,1,2,,,
 ];
 
 
@@ -213,6 +221,8 @@ let tileEngine;
 
       if (state === "title") {
         updateTitleScreen();
+      } else if (state === "controls") {
+        updateConScreen();
       } else if (state === "game") {
         // ----- Test -----
         hitbox.x = x1r;
@@ -240,22 +250,12 @@ let tileEngine;
     render: function() {
       if (state === "title") {
         titleScreen();
+      } else if (state === "controls") {
+        conScreen();
+      } else if (state === "pause") {
+        pause();
       } else if (state === "game") {
-        tileEngine.renderLayer("ground");
-        player.render();
-        renderSIcons();
-        arrows.forEach(arrow => {
-          arrow.render();
-        });
-        
-        renderPeople();
-        renderCoins();
-
-        // ----- Test -----
-        hitbox.render();
-        // ----- Test -----
-
-        //print("abcdefghijklmnopqrstuvwxyz", 36, 32*2, '#FFF1E8');
+        renderGame();
       }
     }
   });
@@ -268,6 +268,21 @@ function camera(left, top) {
   canvas.style.top = top + "px";
 }
 
+function renderGame() {
+  tileEngine.renderLayer("ground");
+  player.render();
+  renderSIcons();
+  arrows.forEach(arrow => {
+    arrow.render();
+  });
+  
+  renderPeople();
+  renderCoins();
+
+  // ----- Test -----
+  hitbox.render();
+  // ----- Test -----
+}
 
 //
 //
@@ -381,6 +396,11 @@ function playerUpdate() {
       player.invisible--;
     }
   }
+
+  // pause
+  onKey(['esc', 'enter'], function() {
+    state = 'pause';
+  });
 }
 
 function playerAnimate() {
@@ -592,7 +612,7 @@ function movePeople() {
     person.dx -= person.acc * person.scaleX;
 
     // jump
-    if (tileEngine.tileAtLayer('ground', person) === 2) {
+    if (tileEngine.tileAtLayer('ground', person) === 5) {
       if (person.checkJump) {
         person.checkJump = false;
         if (shouldJump()) {
@@ -843,8 +863,7 @@ function updateTitleScreen() {
         fx = 1 - fx;
         break;
       case 3:
-        break;
-      case 4:
+        state = "controls";
         break;
     }
   });
@@ -871,6 +890,32 @@ function titleScreen() {
   });
 
   print(normal, 4, "2023 Isaac Benitez", 120, 450, "#5F574F");
+}
+
+function updateConScreen() {
+  onKey(['esc', 'enter'], function() {
+    state = "title";
+  });
+}
+
+function conScreen() {
+  print(normal, 4, "Z      Shoot", 120, 250, "#FFF1E8");
+  print(normal, 4, "X      Jump", 120, 278, "#FFF1E8");
+  print(normal, 4, "<      Left", 120, 306, "#FFF1E8");
+  print(normal, 4, ">      Right", 120, 334, "#FFF1E8");
+  print(normal, 4, "Ent  Select", 120, 364, "#FFF1E8");
+  print(normal, 4, "ESC  back", 120, 388, "#FFF1E8");
+
+}
+
+function updatePause() {
+
+}
+
+function pause() {
+  renderGame();
+  pBox.render();
+  print(normal, 4, "Continue", 120, 250, "#FFF1E8");
 }
 
 //
@@ -1201,6 +1246,13 @@ const normal = {
   ],
   ' ': [
     [,]
+  ],
+  '<': [
+    [,,1],
+    [,1,1],
+    [1,1,1],
+    [,1,1],
+    [,,1]
   ],
   '>': [
     [1],
