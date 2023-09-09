@@ -45,8 +45,8 @@ let hitbox = Sprite({
 let pBox = Sprite({
   x: 256,
   y: 256,
-  width: 200,
-  height: 160,
+  width: 250,
+  height: 180,
   anchor: {x: 0.5, y: 0.5},
   color: '#1D2B53',
 });
@@ -60,8 +60,9 @@ let menu = [
   "steal from the rich",
   "music",
   "sounds",
-  "controls",
+  "controls"
 ];
+let lastState = ""
 let music = 1;
 let fx = 1;
 
@@ -223,6 +224,8 @@ let tileEngine;
         updateTitleScreen();
       } else if (state === "controls") {
         updateConScreen();
+      } else if (state === "pause") {
+        updatePause();
       } else if (state === "game") {
         // ----- Test -----
         hitbox.x = x1r;
@@ -244,6 +247,8 @@ let tileEngine;
         updateArrows();
         movePeople();
         updateCoins();
+
+        menuPointer = 0;
       }
     },
 
@@ -399,7 +404,9 @@ function playerUpdate() {
 
   // pause
   onKey(['esc', 'enter'], function() {
+    lastState = state;
     state = 'pause';
+    menu.push("reset");
   });
 }
 
@@ -850,31 +857,13 @@ function updateTitleScreen() {
     if (menuPointer > menu.length - 1) menuPointer = 0;
   });
 
-  onKey(['enter', 'z', 'x', 'space'], function() {
-    switch (menuPointer) {
-      case 0:
-        initGame();
-        state = "game";
-        break;
-      case 1:
-        music = 1 - music;
-        break;
-      case 2:
-        fx = 1 - fx;
-        break;
-      case 3:
-        state = "controls";
-        break;
-    }
-  });
-
-  (music) ? menu[1] = "music on" : menu[1] = "music off";
-  (fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
+  menuControl();
 
   T++;
 }
 
 function titleScreen() {
+  lastState = "title";
   tileEngine.renderLayer("bg");
 
   print(title, 8, "WANTED", 106, 86 + 28, "#000000");
@@ -882,19 +871,19 @@ function titleScreen() {
 
   menu.forEach((label, i) => {
     if (menuPointer === i) {
-      print(normal, 4, ">", 100 + 4*Math.sin(T/12), 280 + i*28, "#AB5236");
+      print(normal, 4, ">", 100 + 4*Math.sin(T/12), 280 + i*28, "#008751");
       print(normal, 4, label, 130, 280 + i*28, "#FFF1E8", "#008751");
     } else {
       print(normal, 4, label, 130, 280 + i*28, "#FFF1E8");
     }
   });
 
-  print(normal, 4, "2023 Isaac Benitez", 120, 450, "#5F574F");
+  print(normal, 4, "2023 Isaac Benitez", 120, 450, "#C2C3C7");
 }
 
 function updateConScreen() {
   onKey(['esc', 'enter'], function() {
-    state = "title";
+    state = lastState;
   });
 }
 
@@ -909,13 +898,63 @@ function conScreen() {
 }
 
 function updatePause() {
-
+  onKey('esc', function() {
+    state = lastState;
+    menu.push("reset");
+  });
+  
+  menuControl();
 }
 
 function pause() {
+  menu[0] = "continue";
   renderGame();
   pBox.render();
-  print(normal, 4, "Continue", 120, 250, "#FFF1E8");
+  menu.forEach((label, i) => {
+    if (menuPointer === i) {
+      print(normal, 4, ">", 180, 190 + i*28);
+      print(normal, 4, label, 208, 190 + i*28, "#FFF1E8");
+    } else {
+      print(normal, 4, label, 200, 190 + i*28, "#FFF1E8");
+    }
+  });
+}
+
+function menuControl() {
+  onKey(['enter', 'z', 'x', 'space'], function() {
+    switch (menuPointer) {
+      case 0:
+        if (state === "title") {
+          initGame();
+        } else {
+          menu.pop();
+        }
+        state = "game";
+        menuPointer = 0;
+        break;
+      case 1:
+        music = 1 - music;
+        break;
+      case 2:
+        fx = 1 - fx;
+        break;
+      case 3:
+        lastState = state;
+        state = "controls";
+        menuPointer = 0;
+        break;
+      default: // reset
+        lastState = "title";
+        state = "title";
+        menuPointer = 0;
+        menu[0] = "Steal from the rich";
+        menu.pop();
+        break;
+    }
+  });
+
+  (music) ? menu[1] = "music on" : menu[1] = "music off";
+  (fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
 }
 
 //
