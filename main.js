@@ -905,6 +905,9 @@ function conScreen() {
 
 function updatePause() {
   onKey('esc', function() {
+    if (lastState === "pause") {
+      lastState = "game";
+    }
     state = lastState;
     menu.pop();
   });
