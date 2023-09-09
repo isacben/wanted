@@ -847,6 +847,8 @@ function randDir() {
 //
 
 function updateTitleScreen() {
+  onKey('esc', function(){});
+  
   onKey('arrowup', function() {
     menuPointer--;
     if (menuPointer < 0) menuPointer = menu.length - 1;
@@ -888,19 +890,23 @@ function updateConScreen() {
 }
 
 function conScreen() {
-  print(normal, 4, "Z      Shoot", 120, 250, "#FFF1E8");
-  print(normal, 4, "X      Jump", 120, 278, "#FFF1E8");
-  print(normal, 4, "<      Left", 120, 306, "#FFF1E8");
-  print(normal, 4, ">      Right", 120, 334, "#FFF1E8");
-  print(normal, 4, "Ent  Select", 120, 364, "#FFF1E8");
-  print(normal, 4, "ESC  back", 120, 388, "#FFF1E8");
+  let x = 190;
+
+  print(normal, 4, "Controls", x, 100, "#FFF1E8");
+
+  print(normal, 4, "Z      Shoot", x, 170, "#FFF1E8");
+  print(normal, 4, "X      Jump", x, 198, "#FFF1E8");
+  print(normal, 4, "<      Left", x, 226, "#FFF1E8");
+  print(normal, 4, ">      Right", x, 254, "#FFF1E8");
+  print(normal, 4, "Enter  Select", x-32, 320, "#FFF1E8");
+  print(normal, 4, "ESC  back", x, 348, "#FFF1E8");
 
 }
 
 function updatePause() {
   onKey('esc', function() {
     state = lastState;
-    menu.push("reset");
+    menu.pop();
   });
   
   menuControl();
