@@ -30,7 +30,8 @@ let falling = false;
 let sliding = false;
 
 let lives = 1;
-let cash = 0;
+let cash = 100000;
+let goCash = 0;
 let f = 5*60;
 
 // ----- Test -----
@@ -110,6 +111,7 @@ let sIcons = [];
 let arrows = [];
 let people = [];
 let coins = [];
+let goCoin;
 let tileEngine;
 
 
@@ -209,10 +211,17 @@ let tileEngine;
     animations: spriteSheet.animations
   });
 
+  goCoin = Sprite({
+    x: 150,
+    y: 200,
+    width:32,
+    height: 32,
+    animations:spriteSheet.animations
+  });
+
 
   let loop = GameLoop({ 
     update: function() { 
-      guardSpawner();
       //camera(10 + g.shake * (Math.floor(Math.random() * 2) - 1), 10 + g.shake * (Math.floor(Math.random() * 2) - 1));
 
       //if (g.shake > 0) {
@@ -226,6 +235,7 @@ let tileEngine;
       } else if (state === "pause") {
         updatePause();
       } else if (state === "game") {
+        guardSpawner();
         // ----- Test -----
         hitbox.x = x1r;
         hitbox.y = y1r;
@@ -250,6 +260,8 @@ let tileEngine;
         menuPointer = 0;
       } else if (state === "bricks") {
         updateBricks();
+      } else if (state === "over") {
+        updateOver();
       }
     },
 
@@ -446,6 +458,7 @@ function playerHit() {
   player.health--;
 
   if (player.health < 1) {
+    T = 0;
     state = "bricks";
   }
   
@@ -944,11 +957,19 @@ function pause() {
 }
 
 function updateOver() {
-
+  T++;
+  goCoin.y += -0.5 * Math.sin(T/18);
+  if (goCash < cash) {
+    goCash += 100;
+  }
 }
 
 function renderOver() {
-  print(normal, 8, "Game Over", 80, 120, "FFF1E8");
+  print(normal, 8, "Game Over", 120, 120, "#FFF1E8");
+  goCoin.playAnimation('coin');
+  goCoin.render();
+  print(normal, 4, "* " + goCash, goCoin.x + 50, 200, "#FFF1E8");
+  
 }
 
 function updateBricks() {
@@ -956,7 +977,6 @@ function updateBricks() {
   if (T % 6 === 0) {
     bricks.push(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
     tileEngine.setLayer('bricks', bricks);
-    console.log(tileEngine.tileAtLayer('bricks', {row: 0, col: 3}));
     tileEngine.renderLayer("bricks");
   }
   
@@ -1027,6 +1047,7 @@ function initGame() {
   coins = [];
   arrows = [];
   bricks = [];
+  goCoin.y = 200;
   tileEngine.setLayer('bricks', bricks);
   tileEngine.renderLayer('bricks');
   initStatus(player.health);
