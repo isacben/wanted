@@ -29,7 +29,7 @@ let jumping = false;
 let falling = false;
 let sliding = false;
 
-let lives = 3;
+let lives = 1;
 let cash = 0;
 let f = 5*60;
 
@@ -95,6 +95,8 @@ const ttm = [
   ,,3,1,1,1,1,1,1,1,1,1,1,2,,,
 ];
 
+let bricks = [];
+
 
 let { canvas, context } = init();
 initKeys();
@@ -138,7 +140,12 @@ let tileEngine;
       {
         name: "bg",
         data: ttm
-    }]
+      },
+      {
+        name: "bricks",
+        data: bricks
+      }
+    ]
   });
 
   spriteSheet = SpriteSheet({
@@ -241,6 +248,8 @@ let tileEngine;
         updateCoins();
 
         menuPointer = 0;
+      } else if (state === "bricks") {
+        updateBricks();
       }
     },
 
@@ -253,6 +262,10 @@ let tileEngine;
         pause();
       } else if (state === "game") {
         renderGame();
+      } else if (state === "bricks") {
+        renderBricks();
+      } else if (state === "over") {
+        renderOver();
       }
     }
   });
@@ -433,7 +446,7 @@ function playerHit() {
   player.health--;
 
   if (player.health < 1) {
-    state = "title";
+    state = "bricks";
   }
   
   sIcons.shift();
@@ -930,6 +943,34 @@ function pause() {
   });
 }
 
+function updateOver() {
+
+}
+
+function renderOver() {
+  print(normal, 8, "Game Over", 80, 120, "FFF1E8");
+}
+
+function updateBricks() {
+  T++;
+  if (T % 6 === 0) {
+    bricks.push(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+    tileEngine.setLayer('bricks', bricks);
+    console.log(tileEngine.tileAtLayer('bricks', {row: 0, col: 3}));
+    tileEngine.renderLayer("bricks");
+  }
+  
+  if (bricks.length > 256) {
+    state = "over";
+  }
+}
+
+function renderBricks() {
+  renderGame();
+  tileEngine.renderLayer("bricks");
+}
+
+
 function menuControl() {
   onKey(['enter', 'z', 'x', 'space'], function() {
     switch (menuPointer) {
@@ -985,6 +1026,9 @@ function initGame() {
   people = [];
   coins = [];
   arrows = [];
+  bricks = [];
+  tileEngine.setLayer('bricks', bricks);
+  tileEngine.renderLayer('bricks');
   initStatus(player.health);
 
   // spawn rich people

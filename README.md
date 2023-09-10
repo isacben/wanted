@@ -36,14 +36,13 @@ Late TODO List
     - [ ] Visual feedback of the arrows hitting the person
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
-- [ ] Guards and rich people spawner
+- [x] Guards and rich people spawner
 - [ ] Beat guards particles effect
 - [ ] Timer for the level
 - [ ] State machine
     - [x] HUD
     - [x] Controls screen
     - [x] Game
-    - [ ] Tiemout: summary of money and animation with a poor person
     - [ ] Game over screen
     - [x] Pause screen
     - [ ] Fight with the king
