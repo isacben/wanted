@@ -41,11 +41,11 @@ Late TODO List
 - [ ] Timer for the level
 - [ ] State machine
     - [x] HUD
-    - [ ] Controls screen
+    - [x] Controls screen
     - [x] Game
     - [ ] Tiemout: summary of money and animation with a poor person
     - [ ] Game over screen
-    - [ ] Pause screen
+    - [x] Pause screen
     - [ ] Fight with the king
     - [ ] Beat the game screen
 - [x] Bug: arrows disappear when one hits a wall

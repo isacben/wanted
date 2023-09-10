@@ -3,7 +3,6 @@ import {
   initKeys,
   keyPressed,
   onKey,
-  Text,
   imageAssets,
   load,
   TileEngine,
@@ -11,7 +10,8 @@ import {
   SpriteSheet,
   GameLoop,
   collides,
-  clamp
+  clamp,
+  offKey
 } from './kontra.mjs';
 
 
@@ -31,6 +31,7 @@ let sliding = false;
 
 let lives = 3;
 let cash = 0;
+let f = 5*60;
 
 // ----- Test -----
 let x1r = 0;
@@ -69,19 +70,19 @@ let fx = 1;
 const l1 = [
   ,,,,,,,,,,,,,,1,1,
   1,,,,,,,,,,,,,,,1,
-  1,,,,,,,,,,,,,,,1,
+  1,,,,,,,,,,,,4,5,,1,
   1,,,,,,,,,,1,1,1,1,1,1,
-  1,,,,,,,,5,,,,,,,1,
+  1,,,,,,,,8,,,,,,,1,
   1,,,,1,1,1,1,1,1,1,1,1,,,1,
   1,1,1,,,,,,,,,,,,,1,
-  1,,,5,,,,,,,,,,,,1,
+  1,,,8,,,,,,,,,,,,1,
   1,,,1,1,1,1,1,1,1,1,,,,,1,
-  1,,,,,,,,,,,,5,,,1,
-  1,1,1,,,,,,,,,5,1,1,1,1,
+  1,4,5,,,,,,,,,,8,,,1,
+  1,1,1,,,,,,,,,8,1,1,1,1,
   1,,,,,,,,,,1,1,,,,1,
-  1,,,,,,,,,5,,,,,,1,
+  1,,,,,,,,,8,,,,,,1,
   1,,,1,1,1,1,1,1,1,1,1,1,,,1,
-  1,,5,,,,,,,,,,,5,,1,
+  1,,8,,,,,,,,,,,8,,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 ];
 
@@ -187,7 +188,7 @@ let tileEngine;
   });
 
   player = Sprite({
-    x: 8 * 4 + 16,
+    x: 0,
     y: 64 * 4,
     dx: 0,
     dy: 0,
@@ -202,18 +203,9 @@ let tileEngine;
   });
 
 
-  spawnPerson(7, 2, 'guard');
-  spawnPerson(9, 2, 'guard');
-  spawnPerson(9, 4, 'old');
-  spawnPerson(13, 6, 'lady');
-  spawnPerson(7, 2, 'guard');
-  spawnPerson(9, 2, 'guard');
-  spawnPerson(9, 4, 'old');
-  spawnPerson(13, 6, 'lady');
-
   let loop = GameLoop({ 
     update: function() { 
-      
+      guardSpawner();
       //camera(10 + g.shake * (Math.floor(Math.random() * 2) - 1), 10 + g.shake * (Math.floor(Math.random() * 2) - 1));
 
       //if (g.shake > 0) {
@@ -619,7 +611,7 @@ function movePeople() {
     person.dx -= person.acc * person.scaleX;
 
     // jump
-    if (tileEngine.tileAtLayer('ground', person) === 5) {
+    if (tileEngine.tileAtLayer('ground', person) === 8) {
       if (person.checkJump) {
         person.checkJump = false;
         if (shouldJump()) {
@@ -840,6 +832,14 @@ function randDir() {
   return Math.random() < 0.5 ? -1 : 1
 }
 
+function guardSpawner() {
+  
+  if (T % f === 0) {
+    Math.random() < 0.5 ? 
+      spawnPerson(2, 9, 'guard') :
+      spawnPerson(13, 2, 'guard')
+  }
+}
 //
 //
 // ***** /states *****
@@ -884,6 +884,7 @@ function titleScreen() {
 }
 
 function updateConScreen() {
+  offKey(['x', 'z', 'space']);
   onKey(['esc', 'enter'], function() {
     state = lastState;
   });
@@ -975,9 +976,22 @@ function menuControl() {
 function initGame() {
   T = 0;
   player.health = lives;
+  player.invisible = false;
+  player.x = 32*9 + 16;
+  player.y = 32 * 12;
+  player.color = "";
   cash = 0;
   sIcons = [];
+  people = [];
+  coins = [];
+  arrows = [];
   initStatus(player.health);
+
+  // spawn rich people
+  spawnPerson(9, 4, 'old');
+  spawnPerson(13, 6, 'lady');
+  spawnPerson(9, 4, 'old');
+  spawnPerson(13, 6, 'lady')
 }
 
 function shouldJump() {
