@@ -2,14 +2,19 @@
 
 Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
 
-npx js13k-packer index.html dist
+To pack the game, use this command:
 
-subpixel — Today at 9:15 AM
-Yup, a pixel array isn't a bad way to go, especially with JavaScript's sparse array notation. This is where the code golfing fun starts though! If you find yourself running out of space later, and needing to do a whole font of 4x5 letters, try this nonsense: 
-'c444e'.split('').map(c=>parseInt(c,16).toString(2).padStart(4,'0').split('')) 
-That assumes it's unpacking each line of your bitmap, 4 bits, from a single hex character, so 'c444e' is your number 1. You end up with an array like you have above, but with '0' and '1'. It's a lot of unpacking code, but if you did dozens of characters, it'd break even at some point, and then pull ahead. Happy golfing!
+```npx js13k-packer index.html dist```
 
+### September 12th, 2023
 
+A few hours before submission death line!
+
+I am pretty happy with the game. I think I will submit now.
+
+I added FXs and cleaned the code. The zip file is at 12840b.
+
+I will leave the TODO list here, in the last blog post. I had to de-scope several things. Unfortunately I did not start the TODO list from the beginning. I usually leave the de-scoped items in the list, but this time I remove them (also unfortunately).
 
 Late TODO List
 
@@ -23,17 +28,15 @@ Late TODO List
     - [x] Display hearts
     - [x] Invisible period
     - [x] Health counter
-- [ ] Implement money in pocket (score)
+- [x] Implement money in pocket (score)
     - [x] Collision with the coins
     - [x] Coins counter
     - [x] Display money count icon
     - [x] Display money count
-    - [ ] +100 label when the money is collected
 - [x] Implement stealing the money from the rich:
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
 - [x] Guards and rich people spawner
-    - [ ] Increase frequency guards spawner
 - [x] Beat guards particles effect
 - [x] State machine
     - [x] HUD
@@ -42,7 +45,7 @@ Late TODO List
     - [x] Game over screen
     - [x] Pause screen
 - [x] Bug: arrows disappear when one hits a wall
-- [ ] Sound FX
+- [x] Sound FX
 - [x] Background music
 
 ### September 12th, 2023
@@ -78,6 +81,13 @@ I implemented:
 - blinking for the coins when they are going to disappear
 - a print function to display text on specific coordinates of the screen, with the specified color
 - pixel art fonts
+
+Someone told me this on Discord about optimizing fonts:
+
+> subpixel — Today at 9:15 AM
+Yup, a pixel array isn't a bad way to go, especially with JavaScript's sparse array notation. This is where the code golfing fun starts though! If you find yourself running out of space later, and needing to do a whole font of 4x5 letters, try this nonsense: 
+'c444e'.split('').map(c=>parseInt(c,16).toString(2).padStart(4,'0').split('')) 
+That assumes it's unpacking each line of your bitmap, 4 bits, from a single hex character, so 'c444e' is your number 1. You end up with an array like you have above, but with '0' and '1'. It's a lot of unpacking code, but if you did dozens of characters, it'd break even at some point, and then pull ahead. Happy golfing!
 
 I am happy with this progress, and the game is starting to feel fun:
 
