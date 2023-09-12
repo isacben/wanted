@@ -47,23 +47,19 @@ const render = song => {
 
 let isPlaying;
 
-// Sets the current song to the value selected in the UI
 const setSong = song => {
-
   isPlaying = !!node;
-
   if (isPlaying) {
     stop();
   }
 
   buffer = render(song);
-
   if (isPlaying) {
     play();
   }
 }
 
-// Play the tune
+// Play the song
 const play = () => {
   if (node) {
     return;
@@ -73,7 +69,7 @@ const play = () => {
   zzfxX.resume();
 }
 
-// Stop playing the tune
+// Stop playing the song
 const stop = () => {
   if (!node) {
     return
@@ -83,7 +79,7 @@ const stop = () => {
   node = null;
 }
 
-// This reduces CPU usage when a song isn't playing
+zzfxX.suspend();
 setSong(song1);
 
 
@@ -266,7 +262,7 @@ let tileEngine;
   });
 
   goCoin = Sprite({
-    x: 150,
+    x: 170,
     y: 200,
     width:32,
     height: 32,
@@ -1045,13 +1041,21 @@ function updateOver() {
     menu[0] = "Steal from the rich";
     state = lastState;
   });
+
+  player.update();
+  player.playAnimation('playerIdle');
 }
 
 function renderOver() {
-  print(normal, 8, "Game Over", 120, 120, "#FFF1E8");
+  print(normal, 8, "Game Over", 120, 100, "#AB5236");
   goCoin.playAnimation('coin');
   goCoin.render();
   print(normal, 4, "* " + goCash, goCoin.x + 50, 200, "#FFF1E8");
+  player.x = 250;
+  player.y = 280;
+  player.render();
+
+  print(normal, 4, "Press X", 200, 380, "#FFF1E8");
   
 }
 

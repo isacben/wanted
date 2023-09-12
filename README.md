@@ -33,12 +33,13 @@ Late TODO List
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
 - [x] Guards and rich people spawner
+    - [ ] Increase frequency guards spawner
 - [ ] Beat guards particles effect
 - [ ] State machine
     - [x] HUD
     - [x] Controls screen
     - [x] Game
-    - [ ] Game over screen
+    - [x] Game over screen
     - [x] Pause screen
 - [x] Bug: arrows disappear when one hits a wall
 - [ ] Sound FX
