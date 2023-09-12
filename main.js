@@ -14,7 +14,6 @@ import {
   offKey
 } from './kontra.mjs';
 
-
 // Globals
 
 const friction = 0.85;
@@ -33,6 +32,61 @@ let lives = 1;
 let cash = 100000;
 let goCash = 0;
 let f = 5*60;
+
+// audio
+let musicOn = true;
+let fxOn = true;
+let buffer;
+let node;
+
+const song1 = [[[,0,232,.01,.09,.15,2,,,,,,154.87,,,,.26]],[[[,-1,,,,8,,,,,13,,,,,,,,15,,,,16,,,,,,18,,16,,,,15,,,,,,,,11,,,,8,,,,,,,,,,,,,,,,,,,,],[,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],[,-1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],[,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]],[0],,{"title":"New Song","instruments":["Hall Brass"],"patterns":["Pattern 0"]}];
+
+const render = song => {
+  return zzfxM(...song);
+}
+
+let isPlaying;
+
+// Sets the current song to the value selected in the UI
+const setSong = song => {
+
+  isPlaying = !!node;
+
+  if (isPlaying) {
+    stop();
+  }
+
+  buffer = render(song);
+
+  if (isPlaying) {
+    play();
+  }
+}
+
+// Play the tune
+const play = () => {
+  if (node) {
+    return;
+  }
+  node = zzfxP(...buffer);
+  node.loop = true;
+  zzfxX.resume();
+}
+
+// Stop playing the tune
+const stop = () => {
+  if (!node) {
+    return
+  }
+  node.stop();
+  node.disconnect();
+  node = null;
+}
+
+// This reduces CPU usage when a song isn't playing
+setSong(song1);
+
+
 
 // ----- Test -----
 let x1r = 0;
@@ -60,8 +114,8 @@ let state = "title";
 let menuPointer = 0;
 let menu = [
   "steal from the rich",
-  "music",
-  "sounds",
+  "music on",
+  "sounds on",
   "controls"
 ];
 let lastState = ""
@@ -219,7 +273,6 @@ let tileEngine;
     animations:spriteSheet.animations
   });
 
-
   let loop = GameLoop({ 
     update: function() { 
       //camera(10 + g.shake * (Math.floor(Math.random() * 2) - 1), 10 + g.shake * (Math.floor(Math.random() * 2) - 1));
@@ -283,6 +336,7 @@ let tileEngine;
   });
 
   loop.start();
+  play();
 })();
 
 function camera(left, top) {
@@ -424,6 +478,7 @@ function playerUpdate() {
     lastState = state;
     state = 'pause';
     menu.push("reset");
+    zzfxX.suspend();
   });
 }
 
@@ -824,6 +879,9 @@ function updateCoins() {
     if (collides(coin, player)) {
       coin.ttl = 0;
       cash += 100;
+
+      if (fxOn)
+        zzfx(...[,0,2400,.01,.12,.18,,.3,,-1,,,,,,,,.45,.03]); // Pickup 63
     }
 
     deleteCoins(coin, i);
@@ -876,11 +934,17 @@ function updateTitleScreen() {
   onKey('esc', function(){});
   
   onKey('arrowup', function() {
+    if (!isPlaying) {
+      setAudio();
+    }  
     menuPointer--;
     if (menuPointer < 0) menuPointer = menu.length - 1;
   });
 
   onKey('arrowdown', function() {
+    if (!isPlaying) {
+      setAudio();
+    }  
     menuPointer++;
     if (menuPointer > menu.length - 1) menuPointer = 0;
   });
@@ -931,12 +995,23 @@ function conScreen() {
 }
 
 function updatePause() {
+  onKey('arrowup', function() {
+    menuPointer--;
+    if (menuPointer < 0) menuPointer = menu.length - 1;
+  });
+
+  onKey('arrowdown', function() {
+    menuPointer++;
+    if (menuPointer > menu.length - 1) menuPointer = 0;
+  });
+
   onKey('esc', function() {
     if (lastState === "pause") {
       lastState = "game";
     }
     state = lastState;
     menu.pop();
+    setAudio();
   });
   
   menuControl();
@@ -962,6 +1037,14 @@ function updateOver() {
   if (goCash < cash) {
     goCash += 100;
   }
+
+  offKey(['z', 'space', 'esc', 'enter']);
+  onKey(['x'], function() {
+    lastState = "title";
+    menuPointer = 0;
+    menu[0] = "Steal from the rich";
+    state = lastState;
+  });
 }
 
 function renderOver() {
@@ -992,6 +1075,7 @@ function renderBricks() {
 
 
 function menuControl() {
+
   onKey(['enter', 'z', 'x', 'space'], function() {
     switch (menuPointer) {
       case 0:
@@ -1002,12 +1086,30 @@ function menuControl() {
         }
         state = "game";
         menuPointer = 0;
+        setAudio();
         break;
       case 1:
         music = 1 - music;
+        if (music) {
+          menu[1] = "music on";
+          musicOn = true;
+        } else {
+          menu[1] = "music off";
+          musicOn = false;
+        }
+        if (state === "title") {
+          setAudio();
+        }
         break;
       case 2:
         fx = 1 - fx;
+        if (fx) {
+          menu[2] = "sound on";
+          fxOn = true;
+        } else {
+          menu[2] = "sound off";
+          fxOn = false;
+        }
         break;
       case 3:
         lastState = state;
@@ -1020,12 +1122,16 @@ function menuControl() {
         menuPointer = 0;
         menu[0] = "Steal from the rich";
         menu.pop();
+        setAudio();
         break;
     }
   });
 
-  (music) ? menu[1] = "music on" : menu[1] = "music off";
-  (fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
+  //(music) ? menu[1] = "music on" : menu[1] = "music off";
+  
+
+  //(fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
+  
 }
 
 //
@@ -1105,6 +1211,19 @@ function print(font, size, string, posX, posY, color, bgColor) {
   }
 }
 
+function setAudio() {
+  if ((musicOn && fxOn) || (musicOn && !fxOn)) {
+    zzfxX.resume();
+    if (!isPlaying) {
+      play();
+    }
+  } else if (!musicOn && fxOn) {
+    stop();
+    zzfxX.resume();
+  } else if (!musicOn && !fxOn) {
+    zzfxX.suspend();
+  }
+}
 
 //
 //
