@@ -525,6 +525,8 @@ function playerShoot() {
   onKey('z', function() {
     if (!shot) {
       shot = true;
+      if (fxOn)
+      zzfx(...[1.01,,460,.01,.03,.05,1,.7,-1.8,-0.3,,,,,100,,,.88,.01,.06]);
       addArrow(player.x, player.y, player.scaleX);
     }
   });
@@ -537,6 +539,9 @@ function playerHit() {
   player.invisible = 3;
   player.health--;
   redScreen.flash = 2;
+
+  if (fxOn)
+    zzfx(...[1.02,,56,.01,.01,.08,3,2.58,,-0.2,,,,1,11,.1,,.51,.04,.09]); // Hit 124
 
   if (player.health < 1) {
     T = 0;
@@ -845,6 +850,8 @@ function hitPerson(person) {
       if (person.type === 'guard') {
         person.health -= 1;
         person.flash = 1;
+        if (fxOn)
+          zzfx(...[1.05,.02,434,,.1,.16,,1.7,,-5.3,,,.1,.8,,.3,,.51,.08,.01]);
       } else {
         spawnCoins(1, person.x, person.y);
       }
@@ -924,8 +931,9 @@ function updateCoins() {
       coin.ttl = 0;
       cash += 100;
 
+      // pick coin
       if (fxOn)
-        zzfx(...[,0,2400,.01,.12,.18,,.3,,-1,,,,,,,,.45,.03]); // Pickup 63
+        zzfx(...[,0,2400,.01,.12,.18,,.3,,-1,,,,,,,,.45,.03]);
     }
 
     deleteCoins(coin, i);
@@ -952,6 +960,9 @@ function deleteCoins(coin, i) {
 
 
 function destroyGuard(guard) {
+  // pick coin
+  if (fxOn)
+    zzfx(...[2,,810,.01,.02,.52,1,4.36,,.9,,,,1.6,,.6,,.39,.13,.25]);
   people.splice(guard, 1);
 }
 
