@@ -1056,6 +1056,7 @@ function renderOver() {
 }
 
 function updateBricks() {
+  offKey(['enter', 'z', 'x', 'space', 'esc']);
   T++;
   if (T % 6 === 0) {
     bricks.push(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);

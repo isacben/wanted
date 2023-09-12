@@ -16,10 +16,8 @@ Late TODO List
 - [ ] Sprites
     - [x] Hearts (red and gray)
     - [x] Coins
-    - [ ] Poor person
     - [x] Better walls/floors sprites
-    - [ ] Door to spawn characters
-    - [ ] King
+    - [x] Door to spawn characters
 - [x] Pixel art fonts
 - [x] Implement health system
     - [x] Display hearts
@@ -31,22 +29,17 @@ Late TODO List
     - [x] Display money count icon
     - [x] Display money count
     - [ ] +100 label when the money is collected
-- [ ] Implement stealing the money from the rich:
-    - [ ] Collision with the rich
-    - [ ] Visual feedback of the arrows hitting the person
+- [x] Implement stealing the money from the rich:
     - [x] Blink coins before they disappear
     - [x] Coins jumping from the person to the floor and disappearing after some time
 - [x] Guards and rich people spawner
 - [ ] Beat guards particles effect
-- [ ] Timer for the level
 - [ ] State machine
     - [x] HUD
     - [x] Controls screen
     - [x] Game
     - [ ] Game over screen
     - [x] Pause screen
-    - [ ] Fight with the king
-    - [ ] Beat the game screen
 - [x] Bug: arrows disappear when one hits a wall
 - [ ] Sound FX
 - [x] Background music
