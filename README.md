@@ -13,7 +13,7 @@ That assumes it's unpacking each line of your bitmap, 4 bits, from a single hex 
 
 Late TODO List
 
-- [ ] Sprites
+- [x] Sprites
     - [x] Hearts (red and gray)
     - [x] Coins
     - [x] Better walls/floors sprites
@@ -34,8 +34,8 @@ Late TODO List
     - [x] Coins jumping from the person to the floor and disappearing after some time
 - [x] Guards and rich people spawner
     - [ ] Increase frequency guards spawner
-- [ ] Beat guards particles effect
-- [ ] State machine
+- [x] Beat guards particles effect
+- [x] State machine
     - [x] HUD
     - [x] Controls screen
     - [x] Game

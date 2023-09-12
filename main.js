@@ -237,6 +237,10 @@ let tileEngine;
         frames: [10, 11, 10],
         frameRate: 5
       },
+      hit: {
+        frames: [20, 21, 20],
+        frameRate: 5
+      },
       arrow: {
         frames: 12
       },
@@ -774,7 +778,20 @@ function movePeople() {
 
     switch (person.type) {
       case 'guard':
-        person.playAnimation('guard');
+        // guard was hit
+        if (person.flash > 0) {
+          if (T % 10 > 2) {
+            person.playAnimation('hit');
+          } else{
+            person.playAnimation('guard');
+          }
+
+          if (T % 10 === 0) {
+            person.flash--;
+          }
+        } else {
+          person.playAnimation('guard');
+        }
         break;
       case 'lady':
         person.playAnimation('lady');
@@ -785,6 +802,8 @@ function movePeople() {
       default:
         break;
     }
+
+    
     
   });
 
@@ -813,7 +832,8 @@ function spawnPerson(col, row, type) {
     boost: 4.7,
     checkJump: true,
     animations: spriteSheet.animations,
-    type: type
+    type: type,
+    flash: 0
   });
 
   people.push(person);
@@ -824,6 +844,7 @@ function hitPerson(person) {
     if (collides(arrow, person)) {
       if (person.type === 'guard') {
         person.health -= 1;
+        person.flash = 1;
       } else {
         spawnCoins(1, person.x, person.y);
       }
