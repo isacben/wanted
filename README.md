@@ -49,7 +49,26 @@ Late TODO List
     - [ ] Beat the game screen
 - [x] Bug: arrows disappear when one hits a wall
 - [ ] Sound FX
-- [ ] Background music
+- [x] Background music
+
+### September 12th, 2023
+
+Feeling the pressure!
+
+I have not posted any updates in the last several days. But I was working on the state machine, the GUI and the different screens.
+
+That was actually easy!
+
+Then a moved to the sound effects and the music. I had never used these super cool libraries:
+
+https://github.com/KilledByAPixel/ZzFX
+https://github.com/keithclark/ZzFXM
+
+I also had to learn how to use this tracker to compose the music!
+
+I will try to add a bit more juice and finish the game over screen.
+
+![](./gifs/2023-09-12-01.png)
 
 ### September 6th, 2023
 
