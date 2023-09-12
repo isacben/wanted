@@ -157,8 +157,8 @@ let bricks = [];
 let { canvas, context } = init();
 initKeys();
 
-canvas.style.position = 'absolute';
-camera(10, 10);
+//canvas.style.position = 'absolute';
+//camera(10, 10);
 
 let spriteSheet;
 let player;
@@ -169,7 +169,6 @@ let coins = [];
 let particles = [];
 let goCoin;
 let tileEngine;
-
 
 (async () => {
   await load('./img/ss.png', './img/tiles.png');
@@ -374,7 +373,6 @@ function renderGame() {
 //
 // 
 
-
 function playerUpdate() {
   // physics
   player.dy += gravity;
@@ -522,7 +520,7 @@ function playerShoot() {
     if (!shot) {
       shot = true;
       if (fxOn)
-      zzfx(...[1.01,,460,.01,.03,.05,1,.7,-1.8,-0.3,,,,,100,,,.88,.01,.06]);
+        zzfx(...[1.01,,460,.01,.03,.05,1,.7,-1.8,-0.3,,,,,100,,,.88,.01,.06]);
       addArrow(player.x, player.y, player.scaleX);
     }
   });
@@ -548,6 +546,7 @@ function playerHit() {
   reorgSIcons();
 }
 
+// health bar and coins (status)
 function initStatus(health) {
   for (let col = 0; col < health; col++) {
     let heart = Sprite({
@@ -597,7 +596,6 @@ function renderSIcons() {
   sIcons.forEach(icon => {
     icon.render();
   });
-
   print(normal, 4, "*" + cash, (sIcons.length * 32) - (sIcons.length * 8) + 12, 8, '#FFF1E8');
 }
 
@@ -681,14 +679,12 @@ function addArrow(x, y, dir) {
   let arrow = Sprite({
     x: x,
     y: Math.floor((y+12)/32) * 32, // clamp the arrow to a row
-    //y: y + 12,
     dx: 6 * dir,
     scaleX: dir,
     scaleY: 1,
     width: 32,
     height: 32,
     anchor: {x: 0, y: 0},
-    //color: '#AB5236',
     animations: spriteSheet.animations,
     ttl: 70,
   });
@@ -710,12 +706,9 @@ function deleteArrow(arrow, i) {
 function movePeople() {
   people.forEach((person, i)=> {
     person.update();
-    
-    
-    person.dy += gravity;
-    person.dx *= friction;
 
-    
+    person.dy += gravity;
+    person.dx *= friction;    
     person.dx -= person.acc * person.scaleX;
 
     // jump
@@ -739,11 +732,9 @@ function movePeople() {
         person.y -= ((person.y + person.height + 8) % 8) - 1;
       }
     } else if (person.dy < 0) {
-
-
-        if (collide_map(person, "up")) {
-          person.dy = 0;
-        }
+      if (collide_map(person, "up")) {
+        person.dy = 0;
+      }
     }
 
     // check collision left and right
@@ -803,11 +794,7 @@ function movePeople() {
       default:
         break;
     }
-
-    
-    
   });
-
 }
 
 function renderPeople() {
@@ -836,7 +823,6 @@ function spawnPerson(col, row, type) {
     type: type,
     flash: 0
   });
-
   people.push(person);
 }
 
@@ -892,8 +878,7 @@ function updateCoins() {
 
     // check collision up and down
     if (coin.dy > 0) { // falling      
-      coin.dy = clamp(-coin.max_dy, coin.max_dy, coin.dy);
-      
+      coin.dy = clamp(-coin.max_dy, coin.max_dy, coin.dy);    
       if (collide_map(coin, "down")) {
         if (coin.bounce > 0 && coin.dy < 1) {
           coin.boost *= 0.6;
@@ -902,8 +887,7 @@ function updateCoins() {
         } else {
           coin.dy = 0;
           coin.y -= ((coin.y + coin.height + 8) % 8) - 1;
-        }
-        
+        }  
       }
     } else if (coin.dy < 0) {
         if (collide_map(coin, "up")) {
@@ -1037,7 +1021,6 @@ function updateTitleScreen() {
   });
 
   menuControl();
-
   T++;
 }
 
@@ -1076,9 +1059,9 @@ function conScreen() {
   print(normal, 4, "X      Jump", x, 198, "#FFF1E8");
   print(normal, 4, "<      Left", x, 226, "#FFF1E8");
   print(normal, 4, ">      Right", x, 254, "#FFF1E8");
+  
   print(normal, 4, "Enter  Select", x-32, 320, "#FFF1E8");
   print(normal, 4, "ESC  back", x, 348, "#FFF1E8");
-
 }
 
 function updatePause() {
@@ -1147,7 +1130,6 @@ function renderOver() {
   player.render();
 
   print(normal, 4, "Press X", 200, 380, "#FFF1E8");
-  
 }
 
 function updateBricks() {
@@ -1171,7 +1153,6 @@ function renderBricks() {
 
 
 function menuControl() {
-
   onKey(['enter', 'z', 'x', 'space'], function() {
     switch (menuPointer) {
       case 0:
@@ -1222,12 +1203,6 @@ function menuControl() {
         break;
     }
   });
-
-  //(music) ? menu[1] = "music on" : menu[1] = "music off";
-  
-
-  //(fx) ? menu[2] = "Sound on" : menu[2] = "Sound off";
-  
 }
 
 //
