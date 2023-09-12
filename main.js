@@ -28,7 +28,7 @@ let jumping = false;
 let falling = false;
 let sliding = false;
 
-let lives = 1;
+let lives = 4;
 let cash = 100000;
 let goCash = 0;
 let f = 5*60;
@@ -161,6 +161,7 @@ let sIcons = [];
 let arrows = [];
 let people = [];
 let coins = [];
+let particles = [];
 let goCoin;
 let tileEngine;
 
@@ -305,6 +306,7 @@ let tileEngine;
         updateArrows();
         movePeople();
         updateCoins();
+        updateParticles();
 
         menuPointer = 0;
       } else if (state === "bricks") {
@@ -350,6 +352,7 @@ function renderGame() {
   
   renderPeople();
   renderCoins();
+  renderParticles();
 
   // ----- Test -----
   hitbox.render();
@@ -736,6 +739,7 @@ function movePeople() {
     hitPerson(person);
 
     if (person.health <= 0) {
+      spawnParticles(person.x, person.y);
       destroyGuard(i);
     }
 
@@ -920,6 +924,42 @@ function guardSpawner() {
       spawnPerson(13, 2, 'guard')
   }
 }
+
+
+function updateParticles() {
+  particles.forEach(particle => {
+    particle.update();
+    particle.dy += gravity;
+  });
+}
+
+function renderParticles() {
+  particles.forEach(particle => {
+    particle.render();
+  });
+}
+
+function spawnParticles(x, y) {
+  for (let i = 0; i < 5; i++) {
+    let particle = Sprite({
+      x: x,
+      y: y,
+      dy: 0,
+      dx: Math.random() * 2 * randDir(),
+      width: Math.random() * (24 - 8) + 8,
+      height: Math.random() * (24 - 8) + 8,
+      bounce: 3,
+      boost: Math.random() * 4,
+      ttl: 50,
+      anchor: { x: 0.5, y: 0 },
+      color: "#C2C3C7"
+    });
+
+    particles.push(particle);
+    particle.dy -= particle.boost;
+  }
+}
+
 //
 //
 // ***** /states *****
