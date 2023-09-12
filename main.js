@@ -103,6 +103,15 @@ let pBox = Sprite({
   color: '#1D2B53',
 });
 
+let redScreen = Sprite({
+  x: 0,
+  y: 0,
+  width: 512,
+  height: 512,
+  color: "",
+  flash: 0
+})
+
 // ----- Test -----
 
 let T = 0;
@@ -353,7 +362,7 @@ function renderGame() {
   renderPeople();
   renderCoins();
   renderParticles();
-
+  redScreen.render();
   // ----- Test -----
   hitbox.render();
   // ----- Test -----
@@ -472,6 +481,19 @@ function playerUpdate() {
     }
   }
 
+  // player was hit
+  if (redScreen.flash > 0) {
+    if (T % 10 > 7) {
+      redScreen.color = '#7E2553';
+    } else{
+    redScreen.color = '';
+    }
+
+    if (T % 10 === 0) {
+      redScreen.flash--;
+    }
+  }
+
   // pause
   onKey(['esc', 'enter'], function() {
     lastState = state;
@@ -510,6 +532,7 @@ function playerShoot() {
 function playerHit() {
   player.invisible = 3;
   player.health--;
+  redScreen.flash = 2;
 
   if (player.health < 1) {
     T = 0;
@@ -1202,6 +1225,7 @@ function initGame() {
   tileEngine.setLayer('bricks', bricks);
   tileEngine.renderLayer('bricks');
   initStatus(player.health);
+  redScreen.flash = 0;
 
   // spawn rich people
   spawnPerson(9, 4, 'old');
