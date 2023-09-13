@@ -2,6 +2,8 @@
 
 WANTED is a platformer video game. It is my entry to the JS13KGAME 2023 game jam, with the topic 13th Century.
 
+![](./gifs/2023-09-12-01.gif)
+
 To pack the game, use this command:
 
 ```npx js13k-packer index.html dist```
