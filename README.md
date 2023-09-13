@@ -1,6 +1,6 @@
-# Robin Hood
+# WANTED
 
-Robin Hood is a platformer video game. It is my entry to the JS13KGAME game jam 2023, with the topic 13th Century.
+WANTED is a platformer video game. It is my entry to the JS13KGAME 2023 game jam, with the topic 13th Century.
 
 To pack the game, use this command:
 
